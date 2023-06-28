@@ -1,8 +1,6 @@
-import { z } from 'zod'
 import { t } from '../services/trpc.js'
+import { authorizationRouter } from './authorizationRouter.js'
 
-export const appRouter = t.router({
-  hello: t.procedure.input(z.string()).query(({ input }) => `Hello, ${input}!`)
-})
+export const appRouter = t.mergeRouters(authorizationRouter)
 
 export type AppRouter = typeof appRouter
