@@ -1,12 +1,11 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
   import trpc from '../services/trpc'
 
-  onMount(() => {
-    trpc.hello.query('123').then((res) => {
-      console.log(res)
-    })
-  })
+  const res = trpc.hello.query('world')
 </script>
 
-<h1>Hello world!</h1>
+{#await res}
+  <p>Loading...</p>
+{:then greeting}
+  <h1 class="text-red-600 font-bold">{greeting}</h1>
+{/await}
