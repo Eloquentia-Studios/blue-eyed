@@ -7,8 +7,11 @@
   let password: string = ''
 
   const submit = async () => {
-    const token = await trpc.authorize.mutate({ username, password })
-    console.log(token)
+    const redirect = new URLSearchParams(window.location.search).get('redirect')
+    if (!redirect) throw new Error('No redirect URL provided')
+
+    const { redirectToken } = await trpc.authorize.mutate({ username, password })
+    window.location.href = `${redirect}/auth.blue-eyed/callback?redirectToken=${redirectToken}&redirect=${encodeURIComponent(redirect)}`
   }
 </script>
 
