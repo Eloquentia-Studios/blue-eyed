@@ -14,6 +14,13 @@ export const UserRegistrationSchema = z.object({
 
 type UserRegistrationInput = z.infer<typeof UserRegistrationSchema>
 
+export const verifyUser = async (username: string, password: string) => {
+  const user = await getUserByUsername(username)
+  if (!user) return false
+
+  return await verifyPassword(user.password, password)
+}
+
 export const createUser = async (info: UserRegistrationInput) => {
   if (!UserRegistrationSchema.safeParse(info).success) throw new Error('Invalid user registration input.')
 
@@ -21,6 +28,14 @@ export const createUser = async (info: UserRegistrationInput) => {
     data: {
       ...info,
       password: await hashPassword(info.password)
+    }
+  })
+}
+
+export const getUserByUsername = async (username: string) => {
+  return await prisma.user.findUnique({
+    where: {
+      username
     }
   })
 }

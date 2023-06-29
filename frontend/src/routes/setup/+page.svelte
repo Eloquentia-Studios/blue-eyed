@@ -3,6 +3,7 @@
   import CenteredFormWithLogo from '../../components/CenteredFormWithLogo.svelte'
   import HorizontalDivider from '../../components/HorizontalDivider.svelte'
   import Input from '../../components/Input.svelte'
+  import parseTRPCError from '../../lib/parseTRPCError'
   import trpc from '../../services/trpc'
 
   let errorMessage: string | undefined = undefined
@@ -11,26 +12,12 @@
   let email = ''
   let password = ''
 
-  // I don't like this, but couldn't be arsed to write it in a better way
-  const parseErrorMessage = (msg: string) => {
-    let error: string | undefined = undefined
-    let fields: { [key: string]: string } = {}
-    try {
-      const data = JSON.parse(msg)
-      data.reverse().forEach((d: { path: string[]; message: string }) => (fields[d.path.join('.')] = d.message))
-    } catch (err) {
-      error = msg
-    } finally {
-      return { error, fields }
-    }
-  }
-
   const handleSubmit = () => {
     trpc.setupAdmin
       .mutate({ username, email, password })
       .then(() => (window.location.href = '/'))
       .catch((err) => {
-        const { error, fields } = parseErrorMessage(err.message)
+        const { error, fields } = parseTRPCError(err.message)
         errorMessage = error
         invalidFields = fields
       })
