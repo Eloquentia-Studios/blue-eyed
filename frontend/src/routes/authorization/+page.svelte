@@ -11,7 +11,10 @@
 
   const submit = async () => {
     const redirect = new URLSearchParams(window.location.search).get('redirect')
-    if (!redirect) throw new Error('No redirect URL provided')
+    if (!redirect) {
+      errorMessage = 'No redirect URL provided'
+      return
+    }
 
     await trpc.authorize
       .mutate({ username, password })

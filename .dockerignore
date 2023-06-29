@@ -1,0 +1,50 @@
+lib-cov
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+*.swp
+
+pids
+logs
+results
+tmp
+
+# Build
+public/css/main.css
+
+# Coverage reports
+coverage
+
+# API keys and secrets
+.env
+.env.*
+!.env.example
+
+# Dependency directory
+backend/node_modules
+frontend/node_modules
+bower_components
+
+# Editors
+.idea
+*.iml
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Ignore built files
+backend/dist/**/*
+frontend/build/**/*
+
+# ignore yarn.lock
+yarn.lock
+
+.vercel
+.output
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
