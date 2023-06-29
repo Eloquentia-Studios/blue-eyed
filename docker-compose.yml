@@ -4,3 +4,27 @@ services:
     ports:
       - 6379:6379
     restart: unless-stopped
+
+  traefik:
+    image: traefik:v2.5
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - 80:80
+      - 8080:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+
+  whoami:
+    image: traefik/whoami
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`whoami.localhost`)"
+      - "traefik.http.routers.whoami.entrypoints=web"
+      - "traefik.http.routers.whoami.middlewares=whoami-auth"
+      - "traefik.http.middlewares.whoami-auth.basicauth.users=admin:$2a$12$/C/vxc/IkF3O5nJKsGRFpO62DQ0B7DQLNiWaXiELHUDNkdfWFKChm" # admin:admin
+    restart: unless-stopped
