@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
 
   traefik:
-    image: traefik:v2.5
+    image: traefik:latest
     command:
       - "--api.insecure=true"
       - "--providers.docker=true"
@@ -18,6 +18,12 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+
+      - "traefik.http.middlewares.blue-eyed.forwardauth.address=http://blue-eyed/auth/traefik"
+      - "traefik.http.middlewares.blue-eyed.forwardauth.trustForwardHeader=true"
+      - "traefik.http.middlewares.blue-eyed.forwardauth.authResponseHeaders=X-Auth-User, X-Secret, authorization"
 
   whoami:
     image: traefik/whoami
@@ -25,6 +31,17 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.whoami.rule=Host(`whoami.localhost`)"
       - "traefik.http.routers.whoami.entrypoints=web"
-      - "traefik.http.routers.whoami.middlewares=whoami-auth"
-      - "traefik.http.middlewares.whoami-auth.basicauth.users=admin:$2a$12$/C/vxc/IkF3O5nJKsGRFpO62DQ0B7DQLNiWaXiELHUDNkdfWFKChm" # admin:admin
+      - "traefik.http.routers.whoami.middlewares=blue-eyed@docker"
     restart: unless-stopped
+
+  blue-eyed:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.auth.rule=Host(`auth.localhost`)"
+      - "traefik.http.routers.auth.entrypoints=web"
+      # Catch all subdomains
+      - "traefik.http.routers.authentik-outpost.rule=HostRegexp(`{subdomain:[a-z0-9-]+}.localhost`) && PathPrefix(`/auth/`)"
+    command: [nginx-debug, '-g', 'daemon off;']

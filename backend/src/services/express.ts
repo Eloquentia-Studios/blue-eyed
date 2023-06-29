@@ -1,6 +1,7 @@
 import * as trpcExpress from '@trpc/server/adapters/express'
 import express from 'express'
 import { appRouter } from '../routers/appRouter.js'
+import authCheckTraefik from '../routes/authCheckTraefik.js'
 import { createContext } from './trpc.js'
 
 export const initExpress = () => {
@@ -13,6 +14,8 @@ export const initExpress = () => {
       createContext
     })
   )
+
+  app.use('/auth/traefik', authCheckTraefik)
 
   const PORT = process.env.PORT || 3000
   app.listen(3000, () => console.log('Listening on port 3000'))
