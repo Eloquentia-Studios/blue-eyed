@@ -8,7 +8,11 @@ export const initCache = async () => {
   return client.connect()
 }
 
-export const setCache = async (key: string, value: any) => client.set(key, JSON.stringify(value))
+interface CacheOptions {
+  ttl?: number
+}
+
+export const setCache = async (key: string, value: any, options: CacheOptions = {}) => client.set(key, JSON.stringify(value), { EX: options.ttl })
 
 export const getCache = async <T>(key: string) => {
   const value = await client.get(key)
