@@ -1,6 +1,6 @@
 <script lang="ts">
   import Button from '../../components/Button.svelte'
-  import FullScreenCenter from '../../components/FullScreenCenter.svelte'
+  import CenteredFormWithLogo from '../../components/CenteredFormWithLogo.svelte'
   import Input from '../../components/Input.svelte'
   import trpc from '../../services/trpc'
 
@@ -16,12 +16,8 @@
   }
 </script>
 
-<FullScreenCenter>
-  <div class="flex flex-col items-center gap-2 p-4 bg-slate-900 rounded-md shadow-md">
-    <h1 class="text-xl font-semibold text-primary">Blue Eyed</h1>
-
-    <Input type="text" label="Username" bind:value={username} />
-    <Input type="password" label="Password" bind:value={password} />
-    <Button on:click={submit}>Sign in</Button>
-  </div>
-</FullScreenCenter>
+<CenteredFormWithLogo>
+  <Input type="text" label="Username" bind:value={username} />
+  <Input type="password" label="Password" bind:value={password} />
+  <Button className="mt-2" on:click={submit}>Sign in</Button>
+</CenteredFormWithLogo>
