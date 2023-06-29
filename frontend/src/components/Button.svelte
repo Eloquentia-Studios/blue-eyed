@@ -1,1 +1,5 @@
-<button class="border-gray-800 border-solid border-[1px] rounded-sm p-1 pl-2 pr-2" on:click><slot /></button>
+<script lang="ts">
+  export let className: string = ''
+</script>
+
+<button on:click class="bg-primary hover:opacity-90 text-white font-semibold py-2 px-4 rounded-md transition-all {className}"> <slot /></button>

@@ -1,7 +1,8 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
-import { checkCredentials, createAuthorizedToken, createRedirectToken } from '../services/authentication.js'
+import { createAuthorizedToken, createRedirectToken } from '../services/authentication.js'
 import { t } from '../services/trpc.js'
+import { verifyUser } from '../services/user.js'
 
 export const authorizationRouter = t.router({
   authorize: t.procedure
@@ -12,7 +13,7 @@ export const authorizationRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx: { res } }) => {
-      const valid = checkCredentials(input.username, input.password)
+      const valid = await verifyUser(input.username, input.password)
       if (!valid) throw new TRPCError({ message: 'Invalid username and/or password.', code: 'UNAUTHORIZED' })
 
       const token = await createAuthorizedToken(input.username)

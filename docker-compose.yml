@@ -5,6 +5,16 @@ services:
       - 6379:6379
     restart: unless-stopped
 
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: blue-eyed
+    ports:
+      - 5432:5432
+    restart: unless-stopped
+
   traefik:
     image: traefik:latest
     command:
