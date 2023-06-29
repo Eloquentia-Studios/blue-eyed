@@ -6,20 +6,22 @@
   import trpc from '../../services/trpc'
 
   let errorMessage: string | undefined = undefined
-  let invalidFields: ('username' | 'email' | 'password')[] = []
+  let invalidFields: { [key: string]: string } = {}
   let username = ''
   let email = ''
   let password = ''
 
+  // I don't like this, but couldn't be arsed to write it in a better way
   const parseErrorMessage = (msg: string) => {
-    const data = JSON.parse(msg)
-    const fields = data.map((d: { path: string[]; message: string }) => ({ path: d.path[0], message: d.message }))
-    console.log(JSON.parse(msg))
-    console.log(fields)
-
-    return {
-      error: 'An error occurred',
-      fields
+    let error: string | undefined = undefined
+    let fields: { [key: string]: string } = {}
+    try {
+      const data = JSON.parse(msg)
+      data.reverse().forEach((d: { path: string[]; message: string }) => (fields[d.path.join('.')] = d.message))
+    } catch (err) {
+      error = msg
+    } finally {
+      return { error, fields }
     }
   }
 
@@ -29,7 +31,7 @@
       .then(() => (window.location.href = '/'))
       .catch((err) => {
         const { error, fields } = parseErrorMessage(err.message)
-        errorMessage = err.message
+        errorMessage = error
         invalidFields = fields
       })
   }
@@ -43,8 +45,8 @@
 
   {#if errorMessage}<div class="text-red-500">{errorMessage}</div>{/if}
 
-  <Input type="text" label="Username" value="" />
-  <Input type="email" label="Email" value="" />
-  <Input type="password" label="Password" value="" />
+  <Input type="text" label="Username" bind:value={username} error={invalidFields['username']} />
+  <Input type="email" label="Email" bind:value={email} error={invalidFields['email']} />
+  <Input type="password" label="Password" bind:value={password} error={invalidFields['password']} />
   <Button className="mt-2" on:click={handleSubmit}>Complete Setup</Button>
 </CenteredFormWithLogo>
