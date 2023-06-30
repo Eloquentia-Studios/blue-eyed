@@ -22,6 +22,9 @@ RUN pnpm i --frozen-lockfile
 
 FROM node:20-alpine AS build
 
+# Install openssl for packages that need it
+RUN apk add --no-cache openssl
+
 WORKDIR /app
 RUN npm i -g pnpm
 COPY . .
@@ -47,6 +50,9 @@ RUN pnpm run build
 # Setup release container
 FROM node:20-alpine AS release
 
+# Install openssl for packages that need it
+RUN apk add --no-cache openssl
+
 WORKDIR /app
 RUN npm i -g pnpm
 
@@ -62,10 +68,9 @@ COPY --from=build /app/frontend/build ./frontend/build
 COPY --from=build /app/backend/package.json ./backend/package.json
 COPY --from=build /app/backend/pnpm-lock.yaml ./backend/pnpm-lock.yaml
 
-# Install openssl for packages that need it
-RUN apk add --no-cache openssl
-
 WORKDIR /app/backend
 
+RUN pnpm install prisma
+
 EXPOSE 3000
-CMD echo "Sleeping for 10 seconds to ensure database has started.";/bin/sleep 10;npx prisma db push;pnpm start
+CMD echo "Sleeping for 5 seconds to ensure database has started.";/bin/sleep 5;pnpm prisma db push;pnpm start
