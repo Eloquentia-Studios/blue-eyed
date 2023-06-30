@@ -1,5 +1,6 @@
 <script type="ts">
   import { onMount } from 'svelte'
+  import Navigation from '../../components/Navigation.svelte'
   import trpc from '../../services/trpc'
 
   onMount(async () => {
@@ -15,4 +16,7 @@
   })
 </script>
 
-<slot />
+<div class="grid w-screen h-screen grid-cols-1 grid-rows-2">
+  <div class=""><slot /></div>
+  <Navigation className="fixed bottom-0 w-screen" />
+</div>
