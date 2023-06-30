@@ -10,7 +10,7 @@
   })
 </script>
 
-<div class="w-screen p-4 lg:w-xl">
+<div class="w-screen p-4 lg:w-2/3 2xl:w-1/2 lg:m-auto">
   <div class="flex flex-row items-center justify-between mb-2">
     <span class="text-2xl font-bold">Users</span>
     <IconTextButton icon="ic:round-plus" iconClass="w-6 h-6" title="Add User" />
