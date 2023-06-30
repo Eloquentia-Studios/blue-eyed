@@ -17,6 +17,6 @@
 </script>
 
 <div class="grid w-screen h-screen grid-cols-1 grid-rows-2">
-  <div class=""><slot /></div>
+  <div class="pb-[3.75rem] h-fit"><slot /></div>
   <Navigation className="fixed bottom-0 w-screen" />
 </div>
