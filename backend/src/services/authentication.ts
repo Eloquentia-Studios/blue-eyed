@@ -1,35 +1,40 @@
-import { TRPCError } from '@trpc/server'
-import { randomBytes } from 'crypto'
+import generateRandomString from '../libs/generateRandomString.js'
 import { getCache, setCache } from './cache.js'
+import { getLastPasswordReset, getUserById } from './user.js'
 
-export const createAuthorizedToken = async (username: string) => {
-  const token = generateToken()
+export const createAuthorizedToken = async (userId: string) => {
+  const token = generateRandomString()
 
   const ttl = 60 * 60 * 24 * 7 // 7 days
-  const res = await setCache(token, username, { ttl })
-  if (!res) throw new TRPCError({ message: 'Failed to create token.', code: 'INTERNAL_SERVER_ERROR' })
+  const res = await setCache(token, { userId, createdAt: Date.now() }, { ttl })
   return token
 }
 
 export const validateAuthorizedToken = async (token: string) => {
-  const username = await getCache<string>(token)
-  if (!username) throw new TRPCError({ message: 'Invalid token.', code: 'UNAUTHORIZED' })
-  return username
+  const res = await getCache<{ userId: string; createdAt: number }>(token)
+  if (!res) return false
+
+  const { userId, createdAt } = res
+
+  const user = await getUserById(userId)
+  if (!user) return false
+
+  const lastPasswordReset = await getLastPasswordReset(userId)
+  if (lastPasswordReset && lastPasswordReset > createdAt) return false
+
+  return true
 }
 
 export const createRedirectToken = async (token: string) => {
-  const redirectToken = generateToken(32)
+  const redirectToken = generateRandomString(32)
 
   const ttl = 10 // 10 seconds
   const res = await setCache(redirectToken, token, { ttl })
-  if (!res) throw new TRPCError({ message: 'Failed to create redirect token.', code: 'INTERNAL_SERVER_ERROR' })
   return redirectToken
 }
 
-export const validateRedirectToken = async (redirectToken: string) => {
+export const getAuthorizedTokenFromRedirect = async (redirectToken: string) => {
   const token = await getCache<string>(redirectToken)
-  if (!token) throw new TRPCError({ message: 'Invalid redirect token.', code: 'UNAUTHORIZED' })
+  if (!token) throw new Error('Invalid redirect token')
   return token
 }
-
-const generateToken = (size: number = 64) => randomBytes(size).toString('hex')

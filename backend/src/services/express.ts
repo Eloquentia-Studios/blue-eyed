@@ -3,7 +3,7 @@ import type { Express } from 'express'
 import express from 'express'
 import { appRouter } from '../routers/appRouter.js'
 import expressAuthorizationRouter from '../routers/expressAuthorizationRouter.js'
-import authCheckTraefik from '../routes/authCheckTraefik.js'
+import proxyAuthRouter from '../routers/proxyAuthRouter.js'
 import { createContext } from './trpc.js'
 
 export const initExpress = () => {
@@ -17,7 +17,7 @@ export const initExpress = () => {
     })
   )
 
-  app.use('/auth/traefik', authCheckTraefik)
+  app.use('/auth/', proxyAuthRouter)
   app.use('/auth.blue-eyed', expressAuthorizationRouter)
 
   setupStaticServer(app)

@@ -14,11 +14,19 @@ interface CacheOptions {
   ttl?: number
 }
 
-export const setCache = async (key: string, value: any, options: CacheOptions = {}) => client.set(key, JSON.stringify(value), { EX: options.ttl })
+export const setCache = async (key: string, value: any, options: CacheOptions = {}) => {
+  const res = client.set(key, JSON.stringify(value), { EX: options.ttl })
+  if (!res) throw new Error('Failed to set cache')
+}
 
 export const getCache = async <T>(key: string) => {
   const value = await client.get(key)
   if (!value) return null
 
   return JSON.parse(value) as T
+}
+
+export const deleteCache = async (key: string) => {
+  const res = await client.del(key)
+  if (!res) throw new Error('Failed to delete cache')
 }
