@@ -1,6 +1,7 @@
 <script lang="ts">
   import Button from '../../components/Button.svelte'
   import CenteredFormWithLogo from '../../components/CenteredFormWithLogo.svelte'
+  import ErrorMessage from '../../components/ErrorMessage.svelte'
   import HorizontalDivider from '../../components/HorizontalDivider.svelte'
   import Input from '../../components/Input.svelte'
   import parseTRPCError from '../../lib/parseTRPCError'
@@ -30,7 +31,7 @@
 
   <HorizontalDivider />
 
-  {#if errorMessage}<div class="text-red-500">{errorMessage}</div>{/if}
+  <ErrorMessage {errorMessage} />
 
   <Input type="text" label="Username" bind:value={username} error={invalidFields['username']} />
   <Input type="email" label="Email" bind:value={email} error={invalidFields['email']} />
