@@ -23,7 +23,7 @@
     if (!invitationToken) throw new Error('Invalid invitation token')
     trpc.registerUser
       .mutate({ invitationToken, registrationInfo: { username, email, password } })
-      .then(() => (window.location.href = '/'))
+      .then(() => (window.location.href = '/authorization'))
       .catch((err) => {
         const { error, fields } = parseTRPCError(err.message)
         errorMessage = error
