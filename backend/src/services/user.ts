@@ -72,17 +72,19 @@ export const deleteUser = async (id: string) =>
     }
   })
 
-export const setUserPassword = async (id: string, password: string) => {
+export const setUserPassword = async (userId: string, password: string) => {
   const hash = await hashPassword(password)
 
   await prisma.user.update({
     where: {
-      id
+      id: userId
     },
     data: {
       password: hash
     }
   })
+
+  await setCache(`${userId}:last-password-reset`, Date.now())
 }
 
 export const generateResetToken = async (id: string) => {

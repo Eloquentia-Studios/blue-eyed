@@ -6,16 +6,21 @@ export const createAuthorizedToken = async (userId: string) => {
   const token = generateRandomString()
 
   const ttl = 60 * 60 * 24 * 7 // 7 days
-  const res = await setCache(token, userId, { ttl })
+  const res = await setCache(token, { userId, createdAt: Date.now() }, { ttl })
   return token
 }
 
 export const validateAuthorizedToken = async (token: string) => {
-  const userId = await getCache<string>(token)
-  if (!userId) return false
+  const res = await getCache<{ userId: string; createdAt: number }>(token)
+  if (!res) return false
+
+  const { userId, createdAt } = res
 
   const user = await getUserById(userId)
   if (!user) return false
+
+  const lastPasswordReset = await getCache<number>(`${userId}:last-password-reset`)
+  if (lastPasswordReset && lastPasswordReset > createdAt) return false
 
   return true
 }
