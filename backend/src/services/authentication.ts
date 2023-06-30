@@ -1,6 +1,6 @@
 import generateRandomString from '../libs/generateRandomString.js'
 import { getCache, setCache } from './cache.js'
-import { getUserById } from './user.js'
+import { getLastPasswordReset, getUserById } from './user.js'
 
 export const createAuthorizedToken = async (userId: string) => {
   const token = generateRandomString()
@@ -19,7 +19,7 @@ export const validateAuthorizedToken = async (token: string) => {
   const user = await getUserById(userId)
   if (!user) return false
 
-  const lastPasswordReset = await getCache<number>(`${userId}:last-password-reset`)
+  const lastPasswordReset = await getLastPasswordReset(userId)
   if (lastPasswordReset && lastPasswordReset > createdAt) return false
 
   return true

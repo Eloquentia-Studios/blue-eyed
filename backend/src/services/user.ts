@@ -87,6 +87,8 @@ export const setUserPassword = async (userId: string, password: string) => {
   await setCache(`${userId}:last-password-reset`, Date.now())
 }
 
+export const getLastPasswordReset = async (userId: string) => getCache<number>(`${userId}:last-password-reset`)
+
 export const generateResetToken = async (id: string) => {
   const token = await generateRandomString(128)
 
