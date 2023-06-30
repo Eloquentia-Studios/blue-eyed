@@ -7,7 +7,7 @@ export const UserRegistrationSchema = z.object({
     .string()
     .min(3)
     .max(32)
-    .regex(/^[a-zA-Z0-9_]+$/),
+    .regex(/^[a-zA-Z0-9_]+$/, { message: 'Username must only contain alphanumeric characters and underscores.' }),
   email: z.string().email(),
   password: z.string().min(12)
 })
