@@ -1,13 +1,11 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
+  import ErrorMessage from '../../components/ErrorMessage.svelte'
   import IconTextButton from '../../components/IconTextButton.svelte'
+  import Loader from '../../components/Loader.svelte'
   import UserListItem from '../../components/UserListItem.svelte'
   import trpc from '../../services/trpc'
 
-  onMount(async () => {
-    const setupIncomplete = await trpc.setupIncomplete.query()
-    if (setupIncomplete) window.location.href = '/setup'
-  })
+  let users = trpc.getUsers.query()
 </script>
 
 <div class="w-screen p-4 lg:w-2/3 2xl:w-1/2 lg:m-auto">
@@ -17,8 +15,14 @@
   </div>
 
   <div class="flex flex-col p-2 rounded-md bg-slate-900">
-    <UserListItem />
-    <UserListItem />
-    <UserListItem />
+    {#await users}
+      <Loader class="w-20 h-20" />
+    {:then users}
+      {#each users as user}
+        <UserListItem {user} />
+      {/each}
+    {:catch error}
+      <ErrorMessage errorMessage="Could not load users" />
+    {/await}
   </div>
 </div>

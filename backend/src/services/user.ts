@@ -32,13 +32,21 @@ export const createUser = async (info: UserRegistrationInput) => {
   })
 }
 
-export const getUserByUsername = async (username: string) => {
-  return await prisma.user.findUnique({
+export const getUserByUsername = async (username: string) =>
+  prisma.user.findUnique({
     where: {
       username
     }
   })
-}
+
+export const getUsers = async (includePasswordHash = false) =>
+  prisma.user.findMany({
+    select: {
+      username: true,
+      email: true,
+      password: includePasswordHash
+    }
+  })
 
 const hashPassword = async (password: string) => argon2.hash(password)
 const verifyPassword = async (hash: string, password: string) => argon2.verify(hash, password)

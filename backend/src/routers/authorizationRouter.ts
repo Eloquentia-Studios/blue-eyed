@@ -2,6 +2,7 @@ import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 import checkRequestToken from '../libs/checkRequestToken.js'
 import getCookie from '../libs/getCookie.js'
+import authenticatedProcedure from '../procedures/authenticatedProcedure.js'
 import { createAuthorizedToken, createRedirectToken } from '../services/authentication.js'
 import { t } from '../services/trpc.js'
 import { verifyUser } from '../services/user.js'
@@ -24,10 +25,7 @@ export const authorizationRouter = t.router({
       const redirectToken = await createRedirectToken(token)
       return { redirectToken }
     }),
-  getRedirectToken: t.procedure.mutation(async ({ ctx: { req } }) => {
-    const validToken = await checkRequestToken(req)
-    if (!validToken) throw new TRPCError({ message: 'Unauthorized', code: 'UNAUTHORIZED' })
-
+  getRedirectToken: authenticatedProcedure.mutation(async ({ ctx: { req } }) => {
     const tokenCookie = getCookie(req, 'blue-eyed-token')
     if (!tokenCookie) throw new TRPCError({ message: 'Unauthorized', code: 'UNAUTHORIZED' })
 
