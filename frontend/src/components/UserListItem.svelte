@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { RouterOutput } from '../services/trpc'
+  import trpc from '../services/trpc'
   import IconButton from './IconButton.svelte'
   import IconTextButton from './IconTextButton.svelte'
   import MenuButton from './MenuButton.svelte'
@@ -9,6 +10,11 @@
   const toggleMenu = () => (isMenuOpen = !isMenuOpen)
 
   export let user: RouterOutput['getUsers'][number]
+
+  const deleteUser = async () => {
+    if (!confirm(`Are you sure you want to delete ${user.username}?`)) return
+    await trpc.deleteUser.mutate(user.id)
+  }
 </script>
 
 <div class="relative flex items-center justify-between p-2 pb-3 pt-3 after:absolute after:left-[5%] after:w-[90%] after:h-[1px] after:bottom-0 after:bg-gray-800 after:block last:after:hidden">
@@ -19,7 +25,7 @@
 
   <div class="flex-row hidden gap-2 sm:flex">
     <IconTextButton icon="mdi:lock-reset" title="Reset password" />
-    <IconTextButton class="bg-red-600" icon="bi:trash-fill" title="Remove" />
+    <IconTextButton on:click={deleteUser} class="bg-red-600" icon="bi:trash-fill" title="Remove" />
   </div>
 
   <div class="relative sm:hidden">
@@ -28,7 +34,7 @@
     {#if isMenuOpen}
       <PopoutMenu on:clickoutside={toggleMenu}>
         <MenuButton icon="mdi:lock-reset" title="Reset password" />
-        <MenuButton class="bg-red-600" icon="bi:trash-fill" title="Remove" />
+        <MenuButton on:click={deleteUser} class="bg-red-600" icon="bi:trash-fill" title="Remove" />
       </PopoutMenu>
     {/if}
   </div>

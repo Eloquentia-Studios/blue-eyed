@@ -1,19 +1,23 @@
-import { TRPCError } from '@trpc/server'
 import generateRandomString from '../libs/generateRandomString.js'
 import { getCache, setCache } from './cache.js'
+import { getUserById } from './user.js'
 
-export const createAuthorizedToken = async (username: string) => {
+export const createAuthorizedToken = async (userId: string) => {
   const token = generateRandomString()
 
   const ttl = 60 * 60 * 24 * 7 // 7 days
-  const res = await setCache(token, username, { ttl })
+  const res = await setCache(token, userId, { ttl })
   return token
 }
 
 export const validateAuthorizedToken = async (token: string) => {
-  const username = await getCache<string>(token)
-  if (!username) throw new TRPCError({ message: 'Invalid token.', code: 'UNAUTHORIZED' })
-  return username
+  const userId = await getCache<string>(token)
+  if (!userId) return false
+
+  const user = await getUserById(userId)
+  if (!user) return false
+
+  return true
 }
 
 export const createRedirectToken = async (token: string) => {
@@ -24,8 +28,8 @@ export const createRedirectToken = async (token: string) => {
   return redirectToken
 }
 
-export const validateRedirectToken = async (redirectToken: string) => {
+export const getAuthorizedTokenFromRedirect = async (redirectToken: string) => {
   const token = await getCache<string>(redirectToken)
-  if (!token) throw new TRPCError({ message: 'Invalid redirect token.', code: 'UNAUTHORIZED' })
+  if (!token) throw new Error('Invalid redirect token')
   return token
 }

@@ -14,8 +14,8 @@ export const UserRegistrationSchema = z.object({
 
 type UserRegistrationInput = z.infer<typeof UserRegistrationSchema>
 
-export const verifyUser = async (username: string, password: string) => {
-  const user = await getUserByUsername(username)
+export const verifyUser = async (id: string, password: string) => {
+  const user = await getUserById(id)
   if (!user) return false
 
   return await verifyPassword(user.password, password)
@@ -32,19 +32,39 @@ export const createUser = async (info: UserRegistrationInput) => {
   })
 }
 
-export const getUserByUsername = async (username: string) =>
-  prisma.user.findUnique({
+export const getUserIdByUsername = async (username: string) => {
+  const res = await prisma.user.findUnique({
     where: {
       username
+    },
+    select: {
+      id: true
     }
   })
 
-export const getUsers = async (includePasswordHash = false) =>
+  return res ? res.id : null
+}
+
+export const getUserById = async (id: string) =>
+  prisma.user.findUnique({
+    where: {
+      id
+    }
+  })
+
+export const getUsers = async () =>
   prisma.user.findMany({
     select: {
+      id: true,
       username: true,
-      email: true,
-      password: includePasswordHash
+      email: true
+    }
+  })
+
+export const deleteUser = async (id: string) =>
+  prisma.user.delete({
+    where: {
+      id
     }
   })
 

@@ -3,7 +3,7 @@ import { z } from 'zod'
 import authenticatedProcedure from '../procedures/authenticatedProcedure.js'
 import { generateInvitationToken, invalidateInvitationToken, validateInvitationToken } from '../services/invitation.js'
 import { t } from '../services/trpc.js'
-import { UserRegistrationSchema, createUser, getUsers } from '../services/user.js'
+import { UserRegistrationSchema, createUser, deleteUser, getUsers } from '../services/user.js'
 
 export const userRouter = t.router({
   getUsers: authenticatedProcedure.query(() => getUsers()),
@@ -20,5 +20,6 @@ export const userRouter = t.router({
 
       await createUser(registrationInfo)
       await invalidateInvitationToken(invitationToken)
-    })
+    }),
+  deleteUser: authenticatedProcedure.input(z.string()).mutation(async ({ input: id }) => deleteUser(id))
 })
