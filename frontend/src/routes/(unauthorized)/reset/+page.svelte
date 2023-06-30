@@ -10,19 +10,21 @@
 
   let errorMessage: string | undefined = undefined
   let invalidFields: { [key: string]: string } = {}
-  let invitationToken = $page.url.searchParams.get('invitationToken')
-  let username: string = ''
-  let email: string = ''
+  let resetToken = $page.url.searchParams.get('resetToken')
   let password: string = ''
+  let confirmPassword: string = ''
 
   onMount(async () => {
-    if (!invitationToken) window.location.href = '/'
+    if (!resetToken) window.location.href = '/'
   })
 
   const handleSubmit = async () => {
-    if (!invitationToken) return (errorMessage = 'Invalid invitation token')
-    trpc.registerUser
-      .mutate({ invitationToken, registrationInfo: { username, email, password } })
+    if (!resetToken) return (errorMessage = 'Invalid reset token')
+
+    if (password !== confirmPassword) return (errorMessage = 'Passwords do not match')
+
+    trpc.resetUserPassword
+      .mutate({ resetToken, password })
       .then(() => (window.location.href = '/authorization'))
       .catch((err) => {
         const { error, fields } = parseTRPCError(err.message)
@@ -32,14 +34,13 @@
   }
 </script>
 
-<h1 class="text-2xl font-bold">Registration</h1>
-<p class="text-sm text-gray-400">Create your new Blue Eyed account</p>
+<h1 class="text-2xl font-bold">Reset password</h1>
+<p class="text-sm text-gray-400">Choose a new password</p>
 
 <HorizontalDivider />
 
 <ErrorMessage {errorMessage} />
 
-<Input type="text" label="Username" bind:value={username} error={invalidFields['username']} />
-<Input type="email" label="Email" bind:value={email} error={invalidFields['email']} />
 <Input type="password" label="Password" bind:value={password} error={invalidFields['password']} />
-<Button on:click={handleSubmit} className="mt-2">Create Account</Button>
+<Input type="password" label="Confirm Password" bind:value={confirmPassword} error={invalidFields['confirmPassword']} />
+<Button on:click={handleSubmit} className="mt-2">Reset Password</Button>

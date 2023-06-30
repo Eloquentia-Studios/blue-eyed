@@ -1,11 +1,12 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import { onMount } from 'svelte'
-  import Button from '../../../components/Button.svelte'
-  import ErrorMessage from '../../../components/ErrorMessage.svelte'
-  import Input from '../../../components/Input.svelte'
-  import parseTRPCError from '../../../lib/parseTRPCError'
-  import trpc from '../../../services/trpc'
+  import Button from '../../components/Button.svelte'
+  import CenteredFormWithLogo from '../../components/CenteredFormWithLogo.svelte'
+  import ErrorMessage from '../../components/ErrorMessage.svelte'
+  import Input from '../../components/Input.svelte'
+  import parseTRPCError from '../../lib/parseTRPCError'
+  import trpc from '../../services/trpc'
 
   const redirect = $page.url.searchParams.get('redirect')
 
@@ -44,7 +45,9 @@
   }
 </script>
 
-<ErrorMessage {errorMessage} />
-<Input type="text" label="Username" bind:value={username} />
-<Input type="password" label="Password" bind:value={password} />
-<Button className="mt-2" on:click={submit}>Sign in</Button>
+<CenteredFormWithLogo>
+  <ErrorMessage {errorMessage} />
+  <Input type="text" label="Username" bind:value={username} />
+  <Input type="password" label="Password" bind:value={password} />
+  <Button className="mt-2" on:click={submit}>Sign in</Button>
+</CenteredFormWithLogo>

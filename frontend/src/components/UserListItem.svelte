@@ -11,6 +11,12 @@
 
   export let user: RouterOutput['getUsers'][number]
 
+  const resetPassword = async () => {
+    const resetToken = await trpc.requestPasswordReset.mutate(user.id)
+    const url = `${window.location.origin}/reset?resetToken=${encodeURIComponent(resetToken)}`
+    window.prompt('Copy to clipboard: Ctrl+C, Enter', url)
+  }
+
   const deleteUser = async () => {
     if (!confirm(`Are you sure you want to delete ${user.username}?`)) return
     await trpc.deleteUser.mutate(user.id)
@@ -24,7 +30,7 @@
   </div>
 
   <div class="flex-row hidden gap-2 sm:flex">
-    <IconTextButton icon="mdi:lock-reset" title="Reset password" />
+    <IconTextButton on:click={resetPassword} icon="mdi:lock-reset" title="Reset password" />
     <IconTextButton on:click={deleteUser} class="bg-red-600" icon="bi:trash-fill" title="Remove" />
   </div>
 
@@ -33,7 +39,7 @@
 
     {#if isMenuOpen}
       <PopoutMenu on:clickoutside={toggleMenu}>
-        <MenuButton icon="mdi:lock-reset" title="Reset password" />
+        <MenuButton on:click={resetPassword} icon="mdi:lock-reset" title="Reset password" />
         <MenuButton on:click={deleteUser} class="bg-red-600" icon="bi:trash-fill" title="Remove" />
       </PopoutMenu>
     {/if}
