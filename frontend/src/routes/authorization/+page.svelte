@@ -12,14 +12,13 @@
 
   const submit = async () => {
     const redirect = new URLSearchParams(window.location.search).get('redirect')
-    if (!redirect) {
-      errorMessage = 'No redirect URL provided'
-      return
-    }
 
     await trpc.authorize
       .mutate({ username, password })
-      .then(({ redirectToken }) => (window.location.href = `${redirect}/auth.blue-eyed/callback?redirectToken=${redirectToken}&redirect=${encodeURIComponent(redirect)}`))
+      .then(({ redirectToken }) => {
+        if (redirect) window.location.href = `${redirect}/auth.blue-eyed/callback?redirectToken=${redirectToken}&redirect=${encodeURIComponent(redirect)}`
+        else window.location.href = '/'
+      })
       .catch((err) => {
         const { error } = parseTRPCError(err.message)
         errorMessage = error
