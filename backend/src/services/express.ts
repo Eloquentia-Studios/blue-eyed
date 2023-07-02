@@ -1,10 +1,10 @@
 import * as trpcExpress from '@trpc/server/adapters/express'
 import type { Express } from 'express'
 import express from 'express'
-import { appRouter } from '../routers/appRouter.js'
-import expressAuthorizationRouter from '../routers/expressAuthorizationRouter.js'
-import proxyAuthRouter from '../routers/proxyAuthRouter.js'
-import { createContext } from './trpc.js'
+import { appRouter } from '../routers/appRouter'
+import expressAuthorizationRouter from '../routers/expressAuthorizationRouter'
+import proxyAuthRouter from '../routers/proxyAuthRouter'
+import { createContext } from './trpc'
 
 export const initExpress = () => {
   const app = express()

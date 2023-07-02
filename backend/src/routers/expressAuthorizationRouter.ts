@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server'
 import { Router } from 'express'
-import trpcToExpressError from '../libs/trpcToExpressError.js'
-import { getAuthorizedTokenFromRedirect } from '../services/authentication.js'
+import trpcToExpressError from '../libs/trpcToExpressError'
+import { getAuthorizedTokenFromRedirect } from '../services/authentication'
 
 const expressAuthorizationRouter = Router()
 

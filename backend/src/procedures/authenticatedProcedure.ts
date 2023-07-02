@@ -1,6 +1,6 @@
 import { TRPCError } from '@trpc/server'
-import checkRequestToken from '../libs/checkRequestToken.js'
-import { t } from '../services/trpc.js'
+import checkRequestToken from '../libs/checkRequestToken'
+import { t } from '../services/trpc'
 
 const authenticatedProcedure = t.procedure.use(async ({ ctx, next }) => {
   const validToken = await checkRequestToken(ctx.req)

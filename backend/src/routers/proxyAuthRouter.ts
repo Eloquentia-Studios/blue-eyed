@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import authCheckTraefik from '../routes/authCheckTraefik.js'
+import authCheckTraefik from '../routes/authCheckTraefik'
 
 const proxyAuthRouter = Router()
 

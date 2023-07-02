@@ -1,8 +1,8 @@
 import type { Request, Response } from 'express'
-import getCookie from '../libs/getCookie.js'
-import getForwardedHost from '../libs/getForwardedHost.js'
-import getServiceHostname from '../libs/getServiceHostname.js'
-import { validateAuthorizedToken } from '../services/authentication.js'
+import getCookie from '../libs/getCookie'
+import getForwardedHost from '../libs/getForwardedHost'
+import getServiceHostname from '../libs/getServiceHostname'
+import { validateAuthorizedToken } from '../services/authentication'
 
 const authCheckTraefik = async (req: Request, res: Response) => {
   const authenticationUrl = `${getServiceHostname()}/authorization?redirect=${encodeURIComponent(getForwardedHost(req))}`

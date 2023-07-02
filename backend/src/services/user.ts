@@ -1,8 +1,8 @@
 import argon2 from 'argon2'
 import { z } from 'zod'
-import generateRandomString from '../libs/generateRandomString.js'
-import { deleteCache, getCache, setCache } from './cache.js'
-import prisma from './prisma.js'
+import generateRandomString from '../libs/generateRandomString'
+import { deleteCache, getCache, setCache } from './cache'
+import prisma from './prisma'
 
 export const PasswordSchema = z.string().min(12)
 

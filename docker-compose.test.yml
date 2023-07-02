@@ -48,6 +48,9 @@ services:
 
     blue-eyed:
         image: blue-eyed:dev
+        depends_on:
+            - postgres
+            - redis
         build:
             context: .
             dockerfile: Dockerfile

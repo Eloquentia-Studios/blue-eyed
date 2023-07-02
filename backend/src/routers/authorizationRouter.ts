@@ -1,11 +1,11 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
-import checkRequestToken from '../libs/checkRequestToken.js'
-import getCookie from '../libs/getCookie.js'
-import authenticatedProcedure from '../procedures/authenticatedProcedure.js'
-import { createAuthorizedToken, createRedirectToken } from '../services/authentication.js'
-import { t } from '../services/trpc.js'
-import { getUserIdByUsername, verifyUser } from '../services/user.js'
+import checkRequestToken from '../libs/checkRequestToken'
+import getCookie from '../libs/getCookie'
+import authenticatedProcedure from '../procedures/authenticatedProcedure'
+import { createAuthorizedToken, createRedirectToken } from '../services/authentication'
+import { t } from '../services/trpc'
+import { getUserIdByUsername, verifyUser } from '../services/user'
 
 export const authorizationRouter = t.router({
   authorize: t.procedure

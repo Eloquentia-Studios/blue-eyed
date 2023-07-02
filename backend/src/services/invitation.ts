@@ -1,5 +1,5 @@
-import generateRandomString from '../libs/generateRandomString.js'
-import { deleteCache, getCache, setCache } from './cache.js'
+import generateRandomString from '../libs/generateRandomString'
+import { deleteCache, getCache, setCache } from './cache'
 
 export const generateInvitationToken = async () => {
   const token = generateRandomString(16)

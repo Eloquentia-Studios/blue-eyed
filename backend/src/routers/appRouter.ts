@@ -1,7 +1,7 @@
-import { t } from '../services/trpc.js'
-import { authorizationRouter } from './authorizationRouter.js'
-import { setupRouter } from './setupRouter.js'
-import { userRouter } from './userRouter.js'
+import { t } from '../services/trpc'
+import { authorizationRouter } from './authorizationRouter'
+import { setupRouter } from './setupRouter'
+import { userRouter } from './userRouter'
 
 export const appRouter = t.mergeRouters(authorizationRouter, setupRouter, userRouter)
 

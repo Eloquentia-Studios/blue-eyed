@@ -35,12 +35,9 @@ COPY --from=dependencies /app/backend/pnpm-lock.yaml ./backend/pnpm-lock.yaml
 COPY --from=dependencies /app/frontend/node_modules ./frontend/node_modules
 COPY --from=dependencies /app/frontend/pnpm-lock.yaml ./frontend/pnpm-lock.yaml
 
-# Build backend
+# Check backend
 WORKDIR /app/backend
-RUN pnpm prisma generate
-RUN pnpm run build
-
-# Prune backend dependencies to only production
+RUN pnpm type-check
 RUN pnpm prune --prod
 
 # Build frontend
@@ -63,7 +60,7 @@ COPY --from=build /app/backend/node_modules ./backend/node_modules
 COPY --from=build /app/backend/prisma ./backend/prisma
 
 # Copy build files
-COPY --from=build /app/backend/dist ./backend/dist
+COPY --from=build /app/backend/src ./backend/src
 COPY --from=build /app/frontend/build ./frontend/build
 COPY --from=build /app/backend/package.json ./backend/package.json
 COPY --from=build /app/backend/pnpm-lock.yaml ./backend/pnpm-lock.yaml
@@ -73,4 +70,4 @@ WORKDIR /app/backend
 RUN pnpm install prisma
 
 EXPOSE 3000
-CMD echo "Sleeping for 5 seconds to ensure database has started.";/bin/sleep 5;pnpm prisma db push;pnpm start
+CMD pnpm prisma db push; pnpm start

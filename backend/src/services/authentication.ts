@@ -1,6 +1,6 @@
-import generateRandomString from '../libs/generateRandomString.js'
-import { getCache, setCache } from './cache.js'
-import { getLastPasswordReset, getUserById } from './user.js'
+import generateRandomString from '../libs/generateRandomString'
+import { getCache, setCache } from './cache'
+import { getLastPasswordReset, getUserById } from './user'
 
 export const createAuthorizedToken = async (userId: string) => {
   const token = generateRandomString()

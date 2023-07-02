@@ -1,6 +1,6 @@
 import type { Request } from 'express'
-import { validateAuthorizedToken } from '../services/authentication.js'
-import getCookie from './getCookie.js'
+import { validateAuthorizedToken } from '../services/authentication'
+import getCookie from './getCookie'
 
 const checkRequestToken = async (req: Request) => {
   const token = getCookie(req, 'blue-eyed-token')
