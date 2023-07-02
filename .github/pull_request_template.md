@@ -4,6 +4,9 @@
 ## Known issues
 - *Problems introduced either in this PR or found during the development of the PR*
 
+## Related issues
+- Closes #
+
 ## Checklist:
 - [ ] Bumped backend version number (*This is the version used for the Docker image*)
 - [ ] The code is easy to understand and commented in hard-to-understand areas.
