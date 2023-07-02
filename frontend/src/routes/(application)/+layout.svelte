@@ -1,18 +1,17 @@
 <script type="ts">
-  import { onMount } from 'svelte'
   import trpc from '../../services/trpc'
 
-  onMount(async () => {
-    try {
-      const [setupIncomplete, isAuthenticated] = await Promise.all([trpc.setupIncomplete.query(), trpc.isAuthenticated.query()])
+  const client = trpc()
+  const setupIncomplete = client.setupIncomplete.createQuery()
+  const isAuthenticated = client.isAuthenticated.createQuery()
 
-      if (setupIncomplete) window.location.href = '/setup'
-      else if (!isAuthenticated) window.location.href = '/authorization'
-    } catch (error) {
-      console.error(error)
-      window.location.href = '/500'
-    }
-  })
+  const navigateOnStart = () => {
+    if ($setupIncomplete.error || $isAuthenticated.error) return (window.location.href = '/authorization')
+    if ($setupIncomplete.data) return (window.location.href = '/setup')
+    if (!$isAuthenticated.data) return (window.location.href = '/authorization')
+  }
+
+  $: if (!$setupIncomplete.isLoading && !$isAuthenticated.isLoading) navigateOnStart()
 </script>
 
 <div class="grid w-screen h-screen grid-cols-1 grid-rows-2">
