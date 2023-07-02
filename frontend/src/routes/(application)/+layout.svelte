@@ -7,7 +7,7 @@
       const [setupIncomplete, isAuthenticated] = await Promise.all([trpc.setupIncomplete.query(), trpc.isAuthenticated.query()])
 
       if (setupIncomplete) window.location.href = '/setup'
-      if (!isAuthenticated) window.location.href = '/authorization'
+      else if (!isAuthenticated) window.location.href = '/authorization'
     } catch (error) {
       console.error(error)
       window.location.href = '/500'
