@@ -26,14 +26,14 @@
   }
 
   const deleteUser = async () => {
-    if (!confirm(`Are you sure you want to delete ${user.username}?`)) return
+    if (!confirm(`Are you sure you want to delete ${user.displayName}?`)) return
     $deleteUserMutation.mutate(user.id)
   }
 </script>
 
 <div class="relative flex items-center justify-between p-2 pb-3 pt-3 after:absolute after:left-[5%] after:w-[90%] after:h-[1px] after:bottom-0 after:bg-gray-800 after:block last:after:hidden">
   <div class="flex flex-col sm:flex-row sm:gap-3">
-    <span class="font-bold sm:font-semibold">{user.username}</span>
+    <span class="font-bold sm:font-semibold">{user.displayName}</span>
     <span class="text-sm text-gray-500 sm:text-base">{user.email}</span>
   </div>
 

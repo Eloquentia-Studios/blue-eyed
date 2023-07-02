@@ -31,6 +31,8 @@ export const createUser = async (info: UserRegistrationInput) => {
   return await prisma.user.create({
     data: {
       ...info,
+      username: info.username.toLowerCase(),
+      displayName: info.username,
       password: await hashPassword(info.password)
     }
   })
@@ -39,7 +41,7 @@ export const createUser = async (info: UserRegistrationInput) => {
 export const getUserIdByUsername = async (username: string) => {
   const res = await prisma.user.findUnique({
     where: {
-      username
+      username: username.toLowerCase()
     },
     select: {
       id: true
@@ -60,7 +62,7 @@ export const getUsers = async () =>
   prisma.user.findMany({
     select: {
       id: true,
-      username: true,
+      displayName: true,
       email: true
     }
   })
