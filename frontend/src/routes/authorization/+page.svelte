@@ -4,6 +4,7 @@
   import CenteredFormWithLogo from '../../components/CenteredFormWithLogo.svelte'
   import ErrorMessage from '../../components/ErrorMessage.svelte'
   import Input from '../../components/Input.svelte'
+  import Loader from '../../components/Loader.svelte'
   import parseTRPCError from '../../lib/parseTRPCError'
   import trpc from '../../services/trpc'
 
@@ -48,8 +49,12 @@
 </script>
 
 <CenteredFormWithLogo>
-  <ErrorMessage {errorMessage} />
-  <Input type="text" label="Username" bind:value={username} />
-  <Input type="password" label="Password" bind:value={password} />
-  <Button className="mt-2" on:click={submit}>Sign in</Button>
+  {#if $isAuthenticated.isLoading || $getRedirectToken.isLoading}
+    <Loader class="w-12 h-12 sm:w-20 sm:h-20 md:w-24 md:h-24" />
+  {:else}
+    <ErrorMessage {errorMessage} />
+    <Input type="text" label="Username" bind:value={username} />
+    <Input type="password" label="Password" bind:value={password} />
+    <Button className="mt-2" on:click={submit}>Sign in</Button>
+  {/if}
 </CenteredFormWithLogo>
