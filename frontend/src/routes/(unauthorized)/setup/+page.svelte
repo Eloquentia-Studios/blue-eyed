@@ -6,6 +6,8 @@
   import parseTRPCError from '../../../lib/parseTRPCError'
   import trpc from '../../../services/trpc'
 
+  const setupAdmin = trpc().setupAdmin.createMutation()
+
   let errorMessage: string | undefined = undefined
   let invalidFields: { [key: string]: string } = {}
   let username = ''
@@ -13,8 +15,8 @@
   let password = ''
 
   const handleSubmit = () => {
-    trpc.setupAdmin
-      .mutate({ username, email, password })
+    $setupAdmin
+      .mutateAsync({ username, email, password })
       .then(() => (window.location.href = '/'))
       .catch((err) => {
         const { error, fields } = parseTRPCError(err.message)
