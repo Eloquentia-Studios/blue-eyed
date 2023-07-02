@@ -1,4 +1,4 @@
-import prisma from './prisma.js'
+import prisma from './prisma'
 
 export const isSetupComplete = async () => {
   const status = await prisma.status.findUnique({

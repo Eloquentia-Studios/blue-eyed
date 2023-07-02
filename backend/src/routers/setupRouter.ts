@@ -1,8 +1,8 @@
 import { TRPCError } from '@trpc/server'
-import setupProcedure from '../procedures/setupProcedure.js'
-import { completeSetup, isSetupComplete } from '../services/setup.js'
-import { t } from '../services/trpc.js'
-import { UserRegistrationSchema, createUser } from '../services/user.js'
+import setupProcedure from '../procedures/setupProcedure'
+import { completeSetup, isSetupComplete } from '../services/setup'
+import { t } from '../services/trpc'
+import { UserRegistrationSchema, createUser } from '../services/user'
 
 export const setupRouter = t.router({
   setupAdmin: setupProcedure.input(UserRegistrationSchema).mutation(async ({ ctx, input }) => {

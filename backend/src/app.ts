@@ -1,6 +1,6 @@
 import 'dotenv/config'
-import { initCache } from './services/cache.js'
-import { initExpress } from './services/express.js'
+import { initCache } from './services/cache'
+import { initExpress } from './services/express'
 
 initExpress()
 initCache()

@@ -1,9 +1,9 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
-import authenticatedProcedure from '../procedures/authenticatedProcedure.js'
-import { generateInvitationToken, invalidateInvitationToken, validateInvitationToken } from '../services/invitation.js'
-import { t } from '../services/trpc.js'
-import { PasswordSchema, UserRegistrationSchema, createUser, deleteUser, generateResetToken, getUserIdByResetToken, getUsers, invalidateResetToken, setUserPassword } from '../services/user.js'
+import authenticatedProcedure from '../procedures/authenticatedProcedure'
+import { generateInvitationToken, invalidateInvitationToken, validateInvitationToken } from '../services/invitation'
+import { t } from '../services/trpc'
+import { PasswordSchema, UserRegistrationSchema, createUser, deleteUser, generateResetToken, getUserIdByResetToken, getUsers, invalidateResetToken, setUserPassword } from '../services/user'
 
 export const userRouter = t.router({
   getUsers: authenticatedProcedure.query(() => getUsers()),
