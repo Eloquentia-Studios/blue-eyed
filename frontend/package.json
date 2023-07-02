@@ -16,7 +16,7 @@
     "@sveltejs/kit": "^1.20.4",
     "autoprefixer": "^10.4.14",
     "postcss": "^8.4.24",
-    "svelte": "^4.0.0",
+    "svelte": "^4.0.1",
     "svelte-check": "^3.4.3",
     "tailwindcss": "^3.3.2",
     "tslib": "^2.4.1",
@@ -26,7 +26,9 @@
   "type": "module",
   "dependencies": {
     "@svelte-put/clickoutside": "^2.0.0",
+    "@tanstack/svelte-query": "^4.29.19",
     "@trpc/client": "^10.33.0",
-    "@trpc/server": "^10.33.0"
+    "@trpc/server": "^10.33.0",
+    "trpc-svelte-query-adapter": "^2.1.0"
   }
 }
