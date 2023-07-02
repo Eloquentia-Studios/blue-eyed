@@ -8,9 +8,12 @@
   import Input from '../../../components/Input.svelte'
   import trpc from '../../../services/trpc'
 
+  const invitationToken = $page.url.searchParams.get('invitationToken')
+
+  const registerUser = trpc().registerUser.createMutation()
+
   let errorMessage: string | undefined = undefined
   let invalidFields: { [key: string]: string } = {}
-  let invitationToken = $page.url.searchParams.get('invitationToken')
   let username: string = ''
   let email: string = ''
   let password: string = ''
@@ -21,8 +24,8 @@
 
   const handleSubmit = async () => {
     if (!invitationToken) return (errorMessage = 'Invalid invitation token')
-    trpc.registerUser
-      .mutate({ invitationToken, registrationInfo: { username, email, password } })
+    $registerUser
+      .mutateAsync({ invitationToken, registrationInfo: { username, email, password } })
       .then(() => (window.location.href = '/authorization'))
       .catch((err) => {
         const { error, fields } = parseTRPCError(err.message)

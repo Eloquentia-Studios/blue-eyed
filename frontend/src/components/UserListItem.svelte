@@ -1,10 +1,14 @@
 <script lang="ts">
   import type { RouterOutput } from '../services/trpc'
   import trpc from '../services/trpc'
+  import { useDeleteUser } from '../services/user'
   import IconButton from './IconButton.svelte'
   import IconTextButton from './IconTextButton.svelte'
   import MenuButton from './MenuButton.svelte'
   import PopoutMenu from './PopoutMenu.svelte'
+
+  const deleteUserMutation = useDeleteUser()
+  const requestPasswordReset = trpc().requestPasswordReset.createMutation()
 
   let isMenuOpen = false
   const toggleMenu = () => (isMenuOpen = !isMenuOpen)
@@ -12,14 +16,18 @@
   export let user: RouterOutput['getUsers'][number]
 
   const resetPassword = async () => {
-    const resetToken = await trpc.requestPasswordReset.mutate(user.id)
-    const url = `${window.location.origin}/reset?resetToken=${encodeURIComponent(resetToken)}`
-    window.prompt('Copy to clipboard: Ctrl+C, Enter', url)
+    try {
+      const resetToken = await $requestPasswordReset.mutateAsync(user.id)
+      const url = `${window.location.origin}/reset?resetToken=${encodeURIComponent(resetToken)}`
+      window.prompt('Copy to clipboard: Ctrl+C, Enter', url)
+    } catch {
+      alert("Couldn't create reset link")
+    }
   }
 
   const deleteUser = async () => {
     if (!confirm(`Are you sure you want to delete ${user.username}?`)) return
-    await trpc.deleteUser.mutate(user.id)
+    $deleteUserMutation.mutate(user.id)
   }
 </script>
 

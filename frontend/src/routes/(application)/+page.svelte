@@ -5,12 +5,18 @@
   import UserListItem from '../../components/UserListItem.svelte'
   import trpc from '../../services/trpc'
 
-  let users = trpc.getUsers.query()
+  const client = trpc()
+  const getUsers = client.getUsers.createQuery()
+  const createUserInvitation = client.createUserInvitation.createMutation()
 
   const inviteUser = async () => {
-    const invitationToken = await trpc.createUserInvitation.mutate()
-    const url = `${window.location.origin}/register?invitationToken=${encodeURIComponent(invitationToken)}`
-    window.prompt('Copy to clipboard: Ctrl+C, Enter', url)
+    try {
+      const invitationToken = await $createUserInvitation.mutateAsync()
+      const url = `${window.location.origin}/register?invitationToken=${encodeURIComponent(invitationToken)}`
+      window.prompt('Copy to clipboard: Ctrl+C, Enter', url)
+    } catch {
+      alert("Couldn't create invitation link")
+    }
   }
 </script>
 
@@ -21,14 +27,14 @@
   </div>
 
   <div class="flex flex-col p-2 rounded-md bg-slate-900">
-    {#await users}
-      <Loader class="w-20 h-20" />
-    {:then users}
-      {#each users as user}
+    {#if $getUsers.isLoading}
+      <Loader />
+    {:else if $getUsers.error}
+      <ErrorMessage errorMessage="Could not load users" />
+    {:else}
+      {#each $getUsers.data as user}
         <UserListItem {user} />
       {/each}
-    {:catch error}
-      <ErrorMessage errorMessage="Could not load users" />
-    {/await}
+    {/if}
   </div>
 </div>

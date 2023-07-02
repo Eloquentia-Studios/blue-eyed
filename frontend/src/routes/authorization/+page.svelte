@@ -1,6 +1,5 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import { onMount } from 'svelte'
   import Button from '../../components/Button.svelte'
   import CenteredFormWithLogo from '../../components/CenteredFormWithLogo.svelte'
   import ErrorMessage from '../../components/ErrorMessage.svelte'
@@ -10,30 +9,33 @@
 
   const redirect = $page.url.searchParams.get('redirect')
 
-  onMount(async () => {
-    const isAuthenticated = await trpc.isAuthenticated.query()
-    if (isAuthenticated) {
-      trpc.getRedirectToken
-        .mutate()
-        .then(({ redirectToken }) => {
-          if (redirect) window.location.href = `${redirect}/auth.blue-eyed/callback?redirectToken=${redirectToken}&redirect=${encodeURIComponent(redirect)}`
-          else window.location.href = '/'
-        })
-        .catch((err) => {
-          const { error } = parseTRPCError(err.message)
-          console.error(error)
-          window.location.href = '/500'
-        })
-    }
-  })
+  const client = trpc()
+  const isAuthenticated = client.isAuthenticated.createQuery()
+  const getRedirectToken = client.getRedirectToken.createMutation()
+  const authorize = client.authorize.createMutation()
+
+  $: if ($isAuthenticated.error) window.location.href = '/500'
+  $: if ($isAuthenticated.data) {
+    $getRedirectToken
+      .mutateAsync()
+      .then(({ redirectToken }) => {
+        if (redirect) window.location.href = `${redirect}/auth.blue-eyed/callback?redirectToken=${redirectToken}&redirect=${encodeURIComponent(redirect)}`
+        else window.location.href = '/'
+      })
+      .catch((err) => {
+        const { error } = parseTRPCError(err.message)
+        console.error(error)
+        window.location.href = '/500'
+      })
+  }
 
   let username: string = ''
   let password: string = ''
   let errorMessage: string | undefined = undefined
 
   const submit = async () => {
-    await trpc.authorize
-      .mutate({ username, password })
+    $authorize
+      .mutateAsync({ username, password })
       .then(({ redirectToken }) => {
         if (redirect) window.location.href = `${redirect}/auth.blue-eyed/callback?redirectToken=${redirectToken}&redirect=${encodeURIComponent(redirect)}`
         else window.location.href = '/'

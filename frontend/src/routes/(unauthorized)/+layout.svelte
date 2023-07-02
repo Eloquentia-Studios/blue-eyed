@@ -1,18 +1,13 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
   import CenteredFormWithLogo from '../../components/CenteredFormWithLogo.svelte'
   import trpc from '../../services/trpc'
 
-  onMount(async () => {
-    try {
-      const isAuthenticated = await trpc.isAuthenticated.query()
+  const client = trpc()
+  const isAuthenticated = client.isAuthenticated.createQuery()
 
-      if (isAuthenticated) window.location.href = '/'
-    } catch (error) {
-      console.error(error)
-      window.location.href = '/500'
-    }
-  })
+  $: if ($isAuthenticated.error) window.location.href = '/500'
+
+  $: if (!$isAuthenticated.isLoading && $isAuthenticated.data) window.location.href = '/'
 </script>
 
 <CenteredFormWithLogo><slot /></CenteredFormWithLogo>

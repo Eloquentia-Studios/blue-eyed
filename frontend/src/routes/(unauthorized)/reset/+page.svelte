@@ -8,6 +8,8 @@
   import Input from '../../../components/Input.svelte'
   import trpc from '../../../services/trpc'
 
+  const resetUserPassword = trpc().resetUserPassword.createMutation()
+
   let errorMessage: string | undefined = undefined
   let invalidFields: { [key: string]: string } = {}
   let resetToken = $page.url.searchParams.get('resetToken')
@@ -23,8 +25,8 @@
 
     if (password !== confirmPassword) return (errorMessage = 'Passwords do not match')
 
-    trpc.resetUserPassword
-      .mutate({ resetToken, password })
+    $resetUserPassword
+      .mutateAsync({ resetToken, password })
       .then(() => (window.location.href = '/authorization'))
       .catch((err) => {
         const { error, fields } = parseTRPCError(err.message)
