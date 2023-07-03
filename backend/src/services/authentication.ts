@@ -1,12 +1,11 @@
+import { cacheTime, sessionTime } from '../../constants/time'
 import generateRandomString from '../libs/generateRandomString'
 import { getCache, setCache } from './cache'
 import { getLastPasswordReset, getUserById } from './user'
 
 export const createAuthorizedToken = async (userId: string) => {
   const token = generateRandomString()
-
-  const ttl = 60 * 60 * 24 * 7 // 7 days
-  const res = await setCache(token, { userId, createdAt: Date.now() }, { ttl })
+  await setCache(token, { userId, createdAt: Date.now() }, { ttl: sessionTime.cache })
   return token
 }
 
@@ -28,8 +27,7 @@ export const validateAuthorizedToken = async (token: string) => {
 export const createRedirectToken = async (token: string) => {
   const redirectToken = generateRandomString(32)
 
-  const ttl = 10 // 10 seconds
-  const res = await setCache(redirectToken, token, { ttl })
+  await setCache(redirectToken, token, { ttl: cacheTime.second * 10 })
   return redirectToken
 }
 
