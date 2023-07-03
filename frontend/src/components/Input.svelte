@@ -9,11 +9,12 @@
   export let focused: boolean = false
   export let noAutoComplete: boolean = false
 
-  export let inputElement: HTMLInputElement
+  export let inputElement: HTMLInputElement | null = null
 
   const onInput = (e: any) => (value = e.target.value)
 
   onMount(() => {
+    if (!inputElement) return console.error('Input element not found')
     if (focused) inputElement.focus()
   })
 </script>
