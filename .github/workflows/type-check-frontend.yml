@@ -1,10 +1,10 @@
-name: type-check
+name: Type check frontend
 on:
   pull_request:
     branches: [master]
 
 jobs:
-  type-check:
+  type-check-frontend:
     runs-on: ubuntu-latest
 
     defaults:
