@@ -45,4 +45,4 @@
 
 <Input type="password" label="Password" bind:value={password} error={invalidFields['password']} />
 <Input type="password" label="Confirm Password" bind:value={confirmPassword} error={invalidFields['confirmPassword']} />
-<Button on:click={handleSubmit} className="mt-2">Reset Password</Button>
+<Button on:click={handleSubmit} class="mt-2">Reset Password</Button>

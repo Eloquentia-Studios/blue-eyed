@@ -45,4 +45,4 @@
 <Input type="text" label="Username" bind:value={username} error={invalidFields['username']} />
 <Input type="email" label="Email" bind:value={email} error={invalidFields['email']} />
 <Input type="password" label="Password" bind:value={password} error={invalidFields['password']} />
-<Button on:click={handleSubmit} className="mt-2">Create Account</Button>
+<Button on:click={handleSubmit} class="mt-2">Create Account</Button>

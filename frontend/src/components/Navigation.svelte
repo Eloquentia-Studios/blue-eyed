@@ -1,8 +1,4 @@
-<script lang="ts">
-  export let className = ''
-</script>
-
-<div class={className}>
+<div class={$$props.class}>
   <div class="border-t border-gray-600 bg-primary padding-bottom-safe bg-opacity-20 backdrop-blur">
     <div class="flex items-center justify-between h-full px-6 py-4 text-gray-100">
       <a class="flex flex-col items-center space-y-1 text-gray-300" href="/">
