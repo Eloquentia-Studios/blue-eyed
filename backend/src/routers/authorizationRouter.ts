@@ -1,6 +1,6 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
-import { sessionTime } from '../../constants/time'
+import { sessionTime } from '../constants/time'
 import checkRequestToken from '../libs/checkRequestToken'
 import getCookie from '../libs/getCookie'
 import authenticatedProcedure from '../procedures/authenticatedProcedure'

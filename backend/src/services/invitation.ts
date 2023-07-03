@@ -1,4 +1,4 @@
-import { cacheTime } from '../../constants/time'
+import { cacheTime } from '../constants/time'
 import generateRandomString from '../libs/generateRandomString'
 import { deleteCache, getCache, setCache } from './cache'
 

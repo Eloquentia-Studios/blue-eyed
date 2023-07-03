@@ -1,6 +1,6 @@
 import { TRPCError } from '@trpc/server'
 import { Router } from 'express'
-import { sessionTime } from '../../constants/time'
+import { sessionTime } from '../constants/time'
 import trpcToExpressError from '../libs/trpcToExpressError'
 import { getAuthorizedTokenFromRedirect } from '../services/authentication'
 
