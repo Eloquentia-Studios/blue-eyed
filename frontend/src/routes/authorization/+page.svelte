@@ -55,6 +55,6 @@
     <ErrorMessage {errorMessage} />
     <Input type="text" label="Username" bind:value={username} />
     <Input type="password" label="Password" bind:value={password} />
-    <Button className="mt-2" on:click={submit}>Sign in</Button>
+    <Button class="mt-2" on:click={submit}>Sign in</Button>
   {/if}
 </CenteredFormWithLogo>

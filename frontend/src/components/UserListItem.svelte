@@ -2,6 +2,7 @@
   import type { RouterOutput } from '../services/trpc'
   import trpc from '../services/trpc'
   import { useDeleteUser } from '../services/user'
+  import ConfirmDialog from './ConfirmDialog.svelte'
   import IconButton from './IconButton.svelte'
   import IconTextButton from './IconTextButton.svelte'
   import MenuButton from './MenuButton.svelte'
@@ -16,20 +17,19 @@
   export let user: RouterOutput['getUsers'][number]
 
   const resetPassword = async () => {
-    try {
-      const resetToken = await $requestPasswordReset.mutateAsync(user.id)
-      const url = `${window.location.origin}/reset?resetToken=${encodeURIComponent(resetToken)}`
-      window.prompt('Copy to clipboard: Ctrl+C, Enter', url)
-    } catch {
-      alert("Couldn't create reset link")
-    }
+    const resetToken = await $requestPasswordReset.mutateAsync(user.id)
+    const url = `${window.location.origin}/reset?resetToken=${encodeURIComponent(resetToken)}`
+    window.prompt('Copy to clipboard: Ctrl+C, Enter', url)
   }
 
-  const deleteUser = async () => {
-    if (!confirm(`Are you sure you want to delete ${user.displayName}?`)) return
-    $deleteUserMutation.mutate(user.id)
-  }
+  let deleteOpen = false
+
+  const openDelete = () => (deleteOpen = true)
+
+  const deleteUser = async () => $deleteUserMutation.mutate(user.id)
 </script>
+
+<ConfirmDialog confirm={deleteUser} title="Are you sure you want to delete {user.displayName}?" bind:open={deleteOpen} destructive />
 
 <div class="relative flex items-center justify-between p-2 pb-3 pt-3 after:absolute after:left-[5%] after:w-[90%] after:h-[1px] after:bottom-0 after:bg-gray-800 after:block last:after:hidden">
   <div class="flex flex-col sm:flex-row sm:gap-3">
@@ -39,7 +39,7 @@
 
   <div class="flex-row hidden gap-2 sm:flex">
     <IconTextButton on:click={resetPassword} icon="mdi:lock-reset" title="Reset password" />
-    <IconTextButton on:click={deleteUser} class="bg-red-600" icon="bi:trash-fill" title="Remove" />
+    <IconTextButton on:click={openDelete} class="bg-red-600" icon="bi:trash-fill" title="Remove" />
   </div>
 
   <div class="relative sm:hidden">
@@ -48,7 +48,7 @@
     {#if isMenuOpen}
       <PopoutMenu on:clickoutside={toggleMenu}>
         <MenuButton on:click={resetPassword} icon="mdi:lock-reset" title="Reset password" />
-        <MenuButton on:click={deleteUser} class="bg-red-600" icon="bi:trash-fill" title="Remove" />
+        <MenuButton on:click={openDelete} class="bg-red-600" icon="bi:trash-fill" title="Remove" />
       </PopoutMenu>
     {/if}
   </div>

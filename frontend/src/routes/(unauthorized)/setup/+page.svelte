@@ -36,4 +36,4 @@
 <Input type="text" label="Username" bind:value={username} error={invalidFields['username']} />
 <Input type="email" label="Email" bind:value={email} error={invalidFields['email']} />
 <Input type="password" label="Password" bind:value={password} error={invalidFields['password']} />
-<Button className="mt-2" on:click={handleSubmit}>Complete Setup</Button>
+<Button class="mt-2" on:click={handleSubmit}>Complete Setup</Button>
