@@ -1,0 +1,32 @@
+name: Type check frontend
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  type-check-frontend:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install backend dependencies
+        run: pnpm i --frozen-lockfile --prefix ../backend
+
+      - name: Install dependencies
+        run: pnpm i --frozen-lockfile
+
+      - name: Type check
+        run: pnpm run check

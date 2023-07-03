@@ -35,9 +35,8 @@ COPY --from=dependencies /app/backend/pnpm-lock.yaml ./backend/pnpm-lock.yaml
 COPY --from=dependencies /app/frontend/node_modules ./frontend/node_modules
 COPY --from=dependencies /app/frontend/pnpm-lock.yaml ./frontend/pnpm-lock.yaml
 
-# Check backend
+# Remove dev dependencies from backend
 WORKDIR /app/backend
-RUN pnpm type-check
 RUN pnpm prune --prod
 
 # Build frontend
