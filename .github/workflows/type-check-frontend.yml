@@ -1,7 +1,7 @@
 name: Type check frontend
 on:
   pull_request:
-    branches: [master]
+    branches: [main]
 
 jobs:
   type-check-frontend:
