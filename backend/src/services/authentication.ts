@@ -1,4 +1,4 @@
-import { cacheTime, sessionTime } from '../../constants/time'
+import { cacheTime, sessionTime } from '../constants/time'
 import generateRandomString from '../libs/generateRandomString'
 import { getCache, setCache } from './cache'
 import { getLastPasswordReset, getUserById } from './user'

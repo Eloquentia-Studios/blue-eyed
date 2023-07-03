@@ -1,6 +1,6 @@
 import argon2 from 'argon2'
 import { z } from 'zod'
-import { cacheTime } from '../../constants/time'
+import { cacheTime } from '../constants/time'
 import generateRandomString from '../libs/generateRandomString'
 import { deleteCache, getCache, setCache } from './cache'
 import prisma from './prisma'
