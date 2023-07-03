@@ -1,5 +1,6 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
+import { sessionTime } from '../../constants/time'
 import checkRequestToken from '../libs/checkRequestToken'
 import getCookie from '../libs/getCookie'
 import authenticatedProcedure from '../procedures/authenticatedProcedure'
@@ -23,7 +24,7 @@ export const authorizationRouter = t.router({
       if (!valid) throw new TRPCError({ message: 'Invalid username and/or password.', code: 'UNAUTHORIZED' })
 
       const token = await createAuthorizedToken(userId)
-      res.set('Set-Cookie', `blue-eyed-token=${token}; Path=/; HttpOnly; SameSite=Strict; Secure;`)
+      res.set('Set-Cookie', `blue-eyed-token=${token}; Path=/; Max-Age=${sessionTime.cookie}; HttpOnly; SameSite=Strict; Secure;`)
 
       const redirectToken = await createRedirectToken(token)
       return { redirectToken }

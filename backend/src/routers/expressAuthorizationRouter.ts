@@ -1,5 +1,6 @@
 import { TRPCError } from '@trpc/server'
 import { Router } from 'express'
+import { sessionTime } from '../../constants/time'
 import trpcToExpressError from '../libs/trpcToExpressError'
 import { getAuthorizedTokenFromRedirect } from '../services/authentication'
 
@@ -17,7 +18,7 @@ expressAuthorizationRouter.get('/callback', async (req, res) => {
 
     if (!token) return res.status(400).send('Invalid redirect token')
 
-    res.set('Set-Cookie', `blue-eyed-token=${token}; Path=/; HttpOnly; Secure;`)
+    res.set('Set-Cookie', `blue-eyed-token=${token}; Path=/; Max-Age=${sessionTime.cache}; HttpOnly; Secure;`)
     res.redirect(redirect)
   } catch (err) {
     if (err instanceof TRPCError) {

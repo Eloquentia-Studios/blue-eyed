@@ -1,5 +1,6 @@
 import argon2 from 'argon2'
 import { z } from 'zod'
+import { cacheTime } from '../../constants/time'
 import generateRandomString from '../libs/generateRandomString'
 import { deleteCache, getCache, setCache } from './cache'
 import prisma from './prisma'
@@ -94,8 +95,7 @@ export const getLastPasswordReset = async (userId: string) => getCache<number>(`
 export const generateResetToken = async (id: string) => {
   const token = await generateRandomString(128)
 
-  const ttl = 60 * 60 * 6 // 6 hours
-  setCache(token, id, { ttl })
+  setCache(token, id, { ttl: cacheTime.hour * 6 })
 
   return token
 }
