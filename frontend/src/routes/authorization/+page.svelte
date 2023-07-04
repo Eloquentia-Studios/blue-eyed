@@ -48,13 +48,13 @@
   }
 </script>
 
-<CenteredFormWithLogo>
+<CenteredFormWithLogo on:submit={submit}>
   {#if $isAuthenticated.isLoading || $getRedirectToken.isLoading}
     <Loader class="w-12 h-12 sm:w-20 sm:h-20 md:w-24 md:h-24" />
   {:else}
     <ErrorMessage {errorMessage} />
     <Input type="text" label="Username" bind:value={username} />
     <Input type="password" label="Password" bind:value={password} />
-    <Button class="mt-2" on:click={submit}>Sign in</Button>
+    <Button type="submit" class="mt-2">Sign in</Button>
   {/if}
 </CenteredFormWithLogo>
