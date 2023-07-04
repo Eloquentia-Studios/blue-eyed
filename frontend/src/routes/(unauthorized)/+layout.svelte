@@ -1,5 +1,5 @@
 <script lang="ts">
-  import CenteredFormWithLogo from '../../components/CenteredFormWithLogo.svelte'
+  import CenteredFormWithLogo from '../../components/CenteredContainerWithLogo.svelte'
   import Loader from '../../components/Loader.svelte'
   import trpc from '../../services/trpc'
 

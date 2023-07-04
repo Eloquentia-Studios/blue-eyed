@@ -3,6 +3,7 @@
   import parseTRPCError from '$lib/parseTRPCError'
   import { onMount } from 'svelte'
   import Button from '../../../components/Button.svelte'
+  import CenteredContainerForm from '../../../components/CenteredContainerForm.svelte'
   import ErrorMessage from '../../../components/ErrorMessage.svelte'
   import HorizontalDivider from '../../../components/HorizontalDivider.svelte'
   import Input from '../../../components/Input.svelte'
@@ -36,13 +37,15 @@
   }
 </script>
 
-<h1 class="text-2xl font-bold">Reset password</h1>
-<p class="text-sm text-gray-400">Choose a new password</p>
+<CenteredContainerForm on:submit={handleSubmit}>
+  <h1 class="text-2xl font-bold">Reset password</h1>
+  <p class="text-sm text-gray-400">Choose a new password</p>
 
-<HorizontalDivider />
+  <HorizontalDivider />
 
-<ErrorMessage {errorMessage} />
+  <ErrorMessage {errorMessage} />
 
-<Input type="password" label="Password" bind:value={password} error={invalidFields['password']} />
-<Input type="password" label="Confirm Password" bind:value={confirmPassword} error={invalidFields['confirmPassword']} />
-<Button on:click={handleSubmit} class="mt-2">Reset Password</Button>
+  <Input type="password" label="Password" bind:value={password} error={invalidFields['password']} />
+  <Input type="password" label="Confirm Password" bind:value={confirmPassword} error={invalidFields['confirmPassword']} />
+  <Button type="submit" class="mt-2">Reset Password</Button>
+</CenteredContainerForm>
