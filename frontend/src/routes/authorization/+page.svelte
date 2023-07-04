@@ -1,7 +1,8 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import Button from '../../components/Button.svelte'
-  import CenteredFormWithLogo from '../../components/CenteredFormWithLogo.svelte'
+  import CenteredContainerForm from '../../components/CenteredContainerForm.svelte'
+  import CenteredContainerWithLogo from '../../components/CenteredContainerWithLogo.svelte'
   import ErrorMessage from '../../components/ErrorMessage.svelte'
   import Input from '../../components/Input.svelte'
   import Loader from '../../components/Loader.svelte'
@@ -48,13 +49,15 @@
   }
 </script>
 
-<CenteredFormWithLogo on:submit={submit}>
+<CenteredContainerWithLogo>
   {#if $isAuthenticated.isLoading || $getRedirectToken.isLoading}
     <Loader class="w-12 h-12 sm:w-20 sm:h-20 md:w-24 md:h-24" />
   {:else}
-    <ErrorMessage {errorMessage} />
-    <Input type="text" label="Username" bind:value={username} />
-    <Input type="password" label="Password" bind:value={password} />
-    <Button type="submit" class="mt-2">Sign in</Button>
+    <CenteredContainerForm on:submit={submit}>
+      <ErrorMessage {errorMessage} />
+      <Input type="text" label="Username" bind:value={username} />
+      <Input type="password" label="Password" bind:value={password} />
+      <Button type="submit" class="mt-2">Sign in</Button>
+    </CenteredContainerForm>
   {/if}
-</CenteredFormWithLogo>
+</CenteredContainerWithLogo>
