@@ -18,10 +18,10 @@ services:
   traefik:
     image: traefik:latest
     command:
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
+      - '--api.insecure=true'
+      - '--providers.docker=true'
+      - '--providers.docker.exposedbydefault=false'
+      - '--entrypoints.web.address=:80'
     ports:
       - 80:80
       - 8080:8080
@@ -29,19 +29,19 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
     labels:
-      - "traefik.enable=true"
+      - 'traefik.enable=true'
 
-      - "traefik.http.middlewares.blue-eyed.forwardauth.address=http://blue-eyed/auth/traefik"
-      - "traefik.http.middlewares.blue-eyed.forwardauth.trustForwardHeader=true"
-      - "traefik.http.middlewares.blue-eyed.forwardauth.authResponseHeaders=X-Auth-User, X-Secret, authorization"
+      - 'traefik.http.middlewares.blue-eyed.forwardauth.address=http://blue-eyed/auth/traefik'
+      - 'traefik.http.middlewares.blue-eyed.forwardauth.trustForwardHeader=true'
+      - 'traefik.http.middlewares.blue-eyed.forwardauth.authResponseHeaders=X-Auth-User, X-Secret, authorization'
 
   whoami:
     image: traefik/whoami
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule=Host(`whoami.localhost`)"
-      - "traefik.http.routers.whoami.entrypoints=web"
-      - "traefik.http.routers.whoami.middlewares=blue-eyed@docker"
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.whoami.rule=Host(`whoami.localhost`)'
+      - 'traefik.http.routers.whoami.entrypoints=web'
+      - 'traefik.http.routers.whoami.middlewares=blue-eyed@docker'
     restart: unless-stopped
 
   blue-eyed:
@@ -49,7 +49,11 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.auth.rule=Host(`auth.localhost`) || HostRegexp(`{subdomain:[a-z0-9-]+}.localhost`) && PathPrefix(`/auth.blue-eyed/`)"
-      - "traefik.http.routers.auth.entrypoints=web"
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.auth.rule=Host(`auth.localhost`) || HostRegexp(`{subdomain:[a-z0-9-]+}.localhost`) && PathPrefix(`/auth.blue-eyed/`)'
+      - 'traefik.http.routers.auth.entrypoints=web'
     command: [nginx-debug, '-g', 'daemon off;']
+
+    # Linux support for host.docker.internal
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
