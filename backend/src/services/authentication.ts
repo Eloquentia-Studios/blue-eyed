@@ -1,16 +1,31 @@
+import type { Request } from 'express'
+import { z } from 'zod'
 import { cacheTime, sessionTime } from '../constants/time'
 import generateRandomString from '../libs/generateRandomString'
+import getCookie from '../libs/getCookie'
 import { getCache, setCache } from './cache'
 import { getLastPasswordReset, getUserById } from './user'
 
+const userTokenSchema = z.object({
+  userId: z.string().uuid(),
+  createdAt: z.number().positive()
+})
+
+type UserTokenData = z.infer<typeof userTokenSchema>
+
 export const createAuthorizedToken = async (userId: string) => {
   const token = generateRandomString()
-  await setCache(token, { userId, createdAt: Date.now() }, { ttl: sessionTime.cache })
+  const createdAt = Date.now()
+
+  // Want to make sure that tokens look the way we expect them too, or they could create issues
+  const validatedData = await userTokenSchema.parseAsync({ userId, createdAt })
+
+  await setCache(token, validatedData, { ttl: sessionTime.cache })
   return token
 }
 
 export const validateAuthorizedToken = async (token: string) => {
-  const res = await getCache<{ userId: string; createdAt: number }>(token)
+  const res = await getUserTokenData(token)
   if (!res) return false
 
   const { userId, createdAt } = res
@@ -35,4 +50,21 @@ export const getAuthorizedTokenFromRedirect = async (redirectToken: string) => {
   const token = await getCache<string>(redirectToken)
   if (!token) throw new Error('Invalid redirect token')
   return token
+}
+
+export const getRequestUserTokenData = async (req: Request) => {
+  const token = await getCookie(req, 'blue-eyed-token')
+  if (!token) throw new Error('No token available on request.')
+
+  return getUserTokenData(token)
+}
+
+const getUserTokenData = async (token: string) => {
+  const res = await getCache<UserTokenData>(token)
+  if (!res) return null
+
+  const parseResult = await userTokenSchema.safeParseAsync(res)
+  if (!parseResult.success) return null
+
+  return parseResult.data
 }
