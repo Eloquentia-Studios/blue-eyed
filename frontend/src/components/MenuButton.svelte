@@ -3,9 +3,10 @@
 
   export let icon: string
   export let title: string
+  export let disabled = false
 </script>
 
-<button class="{$$props.class} flex flex-row items-center w-full h-10 gap-2 p-2 font-semibold border-b border-b-primary-900 last:border-b-0">
+<button class="{$$props.class} flex flex-row items-center w-full h-10 gap-2 p-2 font-semibold border-b border-b-primary-900 last:border-b-0 disabled:brightness-50" {disabled}>
   <Icon class="w-5 h-5" {icon} />
   {title}
 </button>
