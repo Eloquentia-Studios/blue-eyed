@@ -1,9 +1,10 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 import authenticatedProcedure from '../procedures/authenticatedProcedure'
+import { getRequestUserTokenData } from '../services/authentication'
 import { generateInvitationToken, invalidateInvitationToken, validateInvitationToken } from '../services/invitation'
 import { t } from '../services/trpc'
-import { PasswordSchema, UserRegistrationSchema, createUser, deleteUser, generateResetToken, getUserIdByResetToken, getUsers, invalidateResetToken, setUserPassword } from '../services/user'
+import { PasswordSchema, UserRegistrationSchema, createUser, deleteUser, generateResetToken, getUserById, getUserIdByResetToken, getUsers, invalidateResetToken, setUserPassword } from '../services/user'
 
 export const userRouter = t.router({
   getUsers: authenticatedProcedure.query(() => getUsers()),
@@ -29,5 +30,13 @@ export const userRouter = t.router({
     await setUserPassword(userId, password)
     await invalidateResetToken(resetToken)
   }),
-  requestPasswordReset: authenticatedProcedure.input(z.string()).mutation(({ input: userId }) => generateResetToken(userId))
+  requestPasswordReset: authenticatedProcedure.input(z.string()).mutation(({ input: userId }) => generateResetToken(userId)),
+  getCurrentUser: authenticatedProcedure.query(async ({ ctx }) => {
+    const tokenData = await getRequestUserTokenData(ctx.req)
+    if (!tokenData) throw new Error('Failed to get token data')
+    let user = await getUserById(tokenData.userId)
+    if (!user) throw new Error('That user does not exist')
+
+    return { ...user, password: undefined }
+  })
 })

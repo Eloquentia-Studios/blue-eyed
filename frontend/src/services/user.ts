@@ -8,7 +8,7 @@ export const useDeleteUser = () => {
 
   const userQueryKey = client.getUsers.getQueryKey()
 
-  const deleteUser = trpc().deleteUser.createMutation({
+  const deleteUser = client.deleteUser.createMutation({
     onSuccess: () => {
       queryClient.invalidateQueries(userQueryKey)
     }
@@ -16,3 +16,5 @@ export const useDeleteUser = () => {
 
   return deleteUser
 }
+
+export const getCurrentUser = () => trpc().getCurrentUser.createQuery()

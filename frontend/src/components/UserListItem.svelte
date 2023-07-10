@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { RouterOutput } from '../services/trpc'
   import trpc from '../services/trpc'
-  import { useDeleteUser } from '../services/user'
+  import { getCurrentUser, useDeleteUser } from '../services/user'
   import ConfirmDialog from './ConfirmDialog.svelte'
   import CopyField from './CopyField.svelte'
   import IconButton from './IconButton.svelte'
@@ -12,6 +12,7 @@
 
   const deleteUserMutation = useDeleteUser()
   const requestPasswordReset = trpc().requestPasswordReset.createMutation()
+  const currentUser = getCurrentUser()
 
   export let user: RouterOutput['getUsers'][number]
 
@@ -29,6 +30,9 @@
   let deleteOpen = false
   const openDelete = () => (deleteOpen = true)
   const deleteUser = async () => $deleteUserMutation.mutate(user.id)
+
+  let cannotDeleteUser = false
+  $: cannotDeleteUser = $currentUser.isLoading || $currentUser.isError || $currentUser.data.id === user.id
 </script>
 
 <ConfirmDialog confirm={deleteUser} title="Are you sure you want to delete {user.displayName}?" bind:open={deleteOpen} destructive />
@@ -47,7 +51,7 @@
 
   <div class="flex-row hidden gap-2 sm:flex">
     <IconTextButton on:click={resetPassword} icon="mdi:lock-reset" title="Reset password" />
-    <IconTextButton on:click={openDelete} class="bg-red-600" icon="bi:trash-fill" title="Remove" />
+    <IconTextButton on:click={openDelete} class="bg-red-600" icon="bi:trash-fill" title="Remove" disabled={cannotDeleteUser} />
   </div>
 
   <div class="relative sm:hidden">
@@ -56,7 +60,7 @@
     {#if isMenuOpen}
       <PopoutMenu on:clickoutside={toggleMenu}>
         <MenuButton on:click={resetPassword} icon="mdi:lock-reset" title="Reset password" />
-        <MenuButton on:click={openDelete} class="bg-red-600" icon="bi:trash-fill" title="Remove" />
+        <MenuButton on:click={openDelete} class="bg-red-600" icon="bi:trash-fill" title="Remove" disabled={cannotDeleteUser} />
       </PopoutMenu>
     {/if}
   </div>
