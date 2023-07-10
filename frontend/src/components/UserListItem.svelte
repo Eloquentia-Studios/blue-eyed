@@ -32,7 +32,7 @@
   const deleteUser = async () => $deleteUserMutation.mutate(user.id)
 
   let cannotDeleteUser = false
-  $: cannotDeleteUser = $currentUser.isLoading || $currentUser.isError || $currentUser.data.id === user.id
+  $: cannotDeleteUser = $currentUser.isLoading || $currentUser.isError || $currentUser.data?.id === user.id
 </script>
 
 <ConfirmDialog confirm={deleteUser} title="Are you sure you want to delete {user.displayName}?" bind:open={deleteOpen} destructive />

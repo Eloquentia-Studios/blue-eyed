@@ -1,18 +1,17 @@
 <script lang="ts">
   import CenteredFormWithLogo from '../../components/CenteredContainerWithLogo.svelte'
   import Loader from '../../components/Loader.svelte'
-  import trpc from '../../services/trpc'
+  import { getCurrentUser } from '../../services/user'
 
-  const client = trpc()
-  const isAuthenticated = client.isAuthenticated.createQuery()
+  const currentUser = getCurrentUser()
 
-  $: if ($isAuthenticated.error) window.location.href = '/500'
+  $: if ($currentUser.error) window.location.href = '/500'
 
-  $: if (!$isAuthenticated.isLoading && $isAuthenticated.data) window.location.href = '/'
+  $: if (!$currentUser.isLoading && $currentUser.data) window.location.href = '/'
 </script>
 
 <CenteredFormWithLogo>
-  {#if $isAuthenticated.isLoading}
+  {#if $currentUser.isLoading}
     <Loader class="w-12 h-12 sm:w-20 sm:h-20 md:w-24 md:h-24" />
   {:else}
     <slot />

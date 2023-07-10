@@ -1,11 +1,11 @@
 import { TRPCError } from '@trpc/server'
-import checkRequestToken from '../libs/checkRequestToken'
 import { t } from '../services/trpc'
+import { getUserFromRequest } from '../services/user'
 
 const authenticatedProcedure = t.procedure.use(async ({ ctx, next }) => {
-  const validToken = await checkRequestToken(ctx.req)
-  if (!validToken) throw new TRPCError({ message: 'Unauthorized', code: 'UNAUTHORIZED' })
-  return next({ ctx })
+  const user = await getUserFromRequest(ctx.req)
+  if (!user) throw new TRPCError({ message: 'Unauthorized authentication token', code: 'UNAUTHORIZED' })
+  return next({ ctx: { ...ctx, user } })
 })
 
 export default authenticatedProcedure
