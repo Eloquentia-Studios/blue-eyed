@@ -1,5 +1,5 @@
 import argon2 from 'argon2'
-import { Request } from 'express'
+import type { Request } from 'express'
 import { z } from 'zod'
 import { cacheTime } from '../constants/time'
 import generateRandomString from '../libs/generateRandomString'
