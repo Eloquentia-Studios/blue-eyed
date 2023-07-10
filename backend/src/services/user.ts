@@ -1,7 +1,9 @@
 import argon2 from 'argon2'
+import { Request } from 'express'
 import { z } from 'zod'
 import { cacheTime } from '../constants/time'
 import generateRandomString from '../libs/generateRandomString'
+import { getRequestUserTokenData } from './authentication'
 import { deleteCache, getCache, setCache } from './cache'
 import prisma from './prisma'
 
@@ -103,6 +105,15 @@ export const generateResetToken = async (id: string) => {
 export const getUserIdByResetToken = async (token: string) => {
   const result = await getCache<string>(token)
   return result
+}
+
+export const getUserFromRequest = async (req: Request) => {
+  const tokenData = await getRequestUserTokenData(req)
+  if (!tokenData) return null
+  let user = await getUserById(tokenData.userId)
+  if (!user) return null
+
+  return { ...user, password: undefined }
 }
 
 export const invalidateResetToken = async (token: string) => deleteCache(token)

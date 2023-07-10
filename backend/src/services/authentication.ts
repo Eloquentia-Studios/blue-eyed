@@ -28,14 +28,6 @@ export const validateAuthorizedToken = async (token: string) => {
   const res = await getUserTokenData(token)
   if (!res) return false
 
-  const { userId, createdAt } = res
-
-  const user = await getUserById(userId)
-  if (!user) return false
-
-  const lastPasswordReset = await getLastPasswordReset(userId)
-  if (lastPasswordReset && lastPasswordReset > createdAt) return false
-
   return true
 }
 
@@ -53,8 +45,8 @@ export const getAuthorizedTokenFromRedirect = async (redirectToken: string) => {
 }
 
 export const getRequestUserTokenData = async (req: Request) => {
-  const token = await getCookie(req, 'blue-eyed-token')
-  if (!token) throw new Error('No token available on request.')
+  const token = getCookie(req, 'blue-eyed-token')
+  if (!token) return null
 
   return getUserTokenData(token)
 }
@@ -65,6 +57,14 @@ const getUserTokenData = async (token: string) => {
 
   const parseResult = await userTokenSchema.safeParseAsync(res)
   if (!parseResult.success) return null
+
+  const { userId, createdAt } = res
+
+  const user = await getUserById(userId)
+  if (!user) return null
+
+  const lastPasswordReset = await getLastPasswordReset(userId)
+  if (lastPasswordReset && lastPasswordReset > createdAt) return null
 
   return parseResult.data
 }

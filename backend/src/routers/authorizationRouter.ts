@@ -1,7 +1,6 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 import { sessionTime } from '../constants/time'
-import checkRequestToken from '../libs/checkRequestToken'
 import getCookie from '../libs/getCookie'
 import authenticatedProcedure from '../procedures/authenticatedProcedure'
 import { createAuthorizedToken, createRedirectToken } from '../services/authentication'
@@ -35,6 +34,5 @@ export const authorizationRouter = t.router({
 
     const redirectToken = await createRedirectToken(tokenCookie)
     return { redirectToken }
-  }),
-  isAuthenticated: t.procedure.query(async ({ ctx: { req } }) => checkRequestToken(req))
+  })
 })
