@@ -7,12 +7,12 @@ import { getRequestUserTokenData } from './authentication'
 import { deleteCache, getCache, setCache } from './cache'
 import prisma from './prisma'
 
+export const PasswordSchema = z.string().min(12)
 export const UsernameSchema = z
   .string()
   .min(3)
   .max(32)
   .regex(/^[a-zA-Z0-9_]+$/, { message: 'Username must only contain alphanumeric characters and underscores.' })
-export const PasswordSchema = z.string().min(12)
 
 export const UserRegistrationSchema = z.object({
   username: UsernameSchema,
@@ -44,12 +44,8 @@ export const createUser = async (info: UserRegistrationInput) => {
 
 export const getUserIdByUsername = async (username: string) => {
   const res = await prisma.user.findUnique({
-    where: {
-      username: username.toLowerCase()
-    },
-    select: {
-      id: true
-    }
+    where: { username: username.toLowerCase() },
+    select: { id: true }
   })
 
   return res ? res.id : null
@@ -57,9 +53,7 @@ export const getUserIdByUsername = async (username: string) => {
 
 export const getUserById = async (id: string) =>
   prisma.user.findUnique({
-    where: {
-      id
-    }
+    where: { id }
   })
 
 export const getUsers = async () =>
@@ -73,21 +67,15 @@ export const getUsers = async () =>
 
 export const deleteUser = async (id: string) =>
   prisma.user.delete({
-    where: {
-      id
-    }
+    where: { id }
   })
 
 export const setUserPassword = async (userId: string, password: string) => {
   const hash = await hashPassword(password)
 
   await prisma.user.update({
-    where: {
-      id: userId
-    },
-    data: {
-      password: hash
-    }
+    where: { id: userId },
+    data: { password: hash }
   })
 
   await setCache(`${userId}:last-password-reset`, Date.now())
@@ -97,16 +85,12 @@ export const getLastPasswordReset = async (userId: string) => getCache<number>(`
 
 export const generateResetToken = async (id: string) => {
   const token = await generateRandomString(128)
-
   setCache(token, id, { ttl: cacheTime.hour * 6 })
 
   return token
 }
 
-export const getUserIdByResetToken = async (token: string) => {
-  const result = await getCache<string>(token)
-  return result
-}
+export const getUserIdByResetToken = async (token: string) => await getCache<string>(token)
 
 export const getUserFromRequest = async (req: Request) => {
   const tokenData = await getRequestUserTokenData(req)
