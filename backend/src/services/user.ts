@@ -7,14 +7,15 @@ import { getRequestUserTokenData } from './authentication'
 import { deleteCache, getCache, setCache } from './cache'
 import prisma from './prisma'
 
+export const UsernameSchema = z
+  .string()
+  .min(3)
+  .max(32)
+  .regex(/^[a-zA-Z0-9_]+$/, { message: 'Username must only contain alphanumeric characters and underscores.' })
 export const PasswordSchema = z.string().min(12)
 
 export const UserRegistrationSchema = z.object({
-  username: z
-    .string()
-    .min(3)
-    .max(32)
-    .regex(/^[a-zA-Z0-9_]+$/, { message: 'Username must only contain alphanumeric characters and underscores.' }),
+  username: UsernameSchema,
   email: z.string().email(),
   password: PasswordSchema
 })

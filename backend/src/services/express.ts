@@ -28,7 +28,5 @@ export const initExpress = () => {
 
 const setupStaticServer = (app: Express) => {
   app.use(express.static('../frontend/build'))
-  app.get('*', (_, res) => {
-    res.sendFile('index.html', { root: '../frontend/build' })
-  })
+  app.get('*', (_, res) => res.sendFile('index.html', { root: '../frontend/build' }))
 }

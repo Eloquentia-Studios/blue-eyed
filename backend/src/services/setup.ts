@@ -5,9 +5,6 @@ enum Setup {
   incomplete = 0
 }
 
-export const isSetupComplete = async () => {
-  const status = await getFlag('setup')
-  return status === Setup.complete
-}
+export const isSetupComplete = async () => (await getFlag('setup')) === Setup.complete
 
 export const completeSetup = async () => setFlag('setup', Setup.complete)
