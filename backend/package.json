@@ -6,6 +6,7 @@
   "main": "app.js",
   "scripts": {
     "dev": "tsx watch src/app.ts",
+    "dev-types": "tsc --noEmit --watch",
     "type-check": "tsc --noEmit",
     "start": "tsx src/app.ts"
   },
