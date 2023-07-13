@@ -7,9 +7,7 @@
   export let open: boolean
   export let hideCloseButton = false
 
-  const close = () => {
-    open = false
-  }
+  const close = () => (open = false)
 
   const escapeCloses = (e: KeyboardEvent) => {
     if (e.key === 'Escape') close()
@@ -28,7 +26,7 @@
   {#if dialog && open}
     <div id="modal-content" class="relative" use:clickoutside={{ event: 'mousedown' }} on:clickoutside={close}>
       <button class="absolute cursor-pointer -right-2 -top-2 hover:brightness-75" class:hidden={hideCloseButton} on:keypress={escapeCloses} on:click={close}>
-        <Icon icon="ic:round-close" class="w-5 h-5 " />
+        <Icon icon="ic:round-close" class="w-5 h-5" />
       </button>
       <slot />
     </div>

@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/svelte-query'
 import trpc from './trpc'
 
-export const useDeleteUser = () => {
+export const deleteUser = () => {
   const queryClient = useQueryClient()
 
   const client = trpc()
@@ -18,3 +18,5 @@ export const useDeleteUser = () => {
 }
 
 export const getCurrentUser = () => trpc().getCurrentUser.createQuery()
+
+export const requestPasswordReset = () => trpc().requestPasswordReset.createMutation()

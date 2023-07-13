@@ -23,6 +23,7 @@
   <label class="text-sm text-gray-400" for={label}>
     {label}
   </label>
+
   <input
     class="px-4 py-2 text-gray-400 transition-all border border-gray-700 rounded-md bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
     class:border-red-500={error ? true : false}
@@ -35,6 +36,7 @@
     bind:this={inputElement}
     autocomplete={noAutoComplete ? 'off' : 'on'}
   />
+
   {#if error}
     <div class="text-sm text-red-500">{error}</div>
   {/if}

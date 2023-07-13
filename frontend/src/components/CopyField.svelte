@@ -6,13 +6,9 @@
   export let value: string
   export let copyOnMount: boolean = false
 
-  const selectAll = () => {
-    input.select()
-  }
+  const selectAll = () => input.select()
 
-  const copyContent = (content: string) => {
-    navigator.clipboard.writeText(content).catch((err) => console.error('Failed to automatically copy content to clipboard.')) // TODO: Make this use a toast
-  }
+  const copyContent = (content: string) => navigator.clipboard.writeText(content).catch((err) => console.error('Failed to automatically copy content to clipboard.')) // TODO: Make this use a toast
 
   onMount(() => {
     if (copyOnMount) copyContent(value)
