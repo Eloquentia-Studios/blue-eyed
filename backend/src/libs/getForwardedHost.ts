@@ -1,15 +1,12 @@
 import type { Request } from 'express'
 
-const getForwardedHost = (req: Request): string => {
-  const forwardedProto = req.headers['x-forwarded-proto']
-  if (!forwardedProto) throw new Error('No forwarded proto')
-  if (Array.isArray(forwardedProto)) throw new Error('Forwarded proto is array')
+const getForwardedUrl = (req: Request): string => `${getHeaderValue(req, 'x-forwarded-proto')}://${getHeaderValue(req, 'x-forwarded-host')}`
 
-  const forwardedHost = req.headers['x-forwarded-host']
-  if (!forwardedHost) throw new Error('No forwarded host')
-  if (Array.isArray(forwardedHost)) throw new Error('Forwarded host is array')
-
-  return `${forwardedProto}://${forwardedHost}`
+const getHeaderValue = (req: Request, name: string): string => {
+  const value = req.headers[name]
+  if (!value) throw new Error(`No ${name}`)
+  if (Array.isArray(value)) throw new Error(`${name} is an array`)
+  return value
 }
 
-export default getForwardedHost
+export default getForwardedUrl

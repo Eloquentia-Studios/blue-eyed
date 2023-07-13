@@ -1,12 +1,10 @@
 import type { TRPCError } from '@trpc/server'
 import type { TRPC_ERROR_CODE_KEY } from '@trpc/server/dist/rpc/codes'
 
-const trpcToExpressError = (err: TRPCError) => {
-  return {
-    status: statusToNumber(err.code),
-    message: err.message
-  }
-}
+const trpcToExpressError = (err: TRPCError) => ({
+  status: statusToNumber(err.code),
+  message: err.message
+})
 
 const statusToNumber = (status: TRPC_ERROR_CODE_KEY) => {
   switch (status) {
