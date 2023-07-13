@@ -17,7 +17,8 @@ const logger = createLogger({
         info: 'blue',
         error: 'red',
         warn: 'yellow',
-        debug: 'green'
+        debug: 'green',
+        verbose: 'cyan'
       }
     }),
     format.simple(),

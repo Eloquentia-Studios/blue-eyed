@@ -1,9 +1,9 @@
-import { TRPCError } from '@trpc/server'
+import throwAndLogTRPCError from '../libs/throwAndLogTRPCError'
 import { isSetupComplete } from '../services/setup'
 import { t } from '../services/trpc'
 
 const setupProcedure = t.procedure.use(async ({ ctx, next }) => {
-  if (await isSetupComplete()) throw new TRPCError({ code: 'FORBIDDEN', message: 'Setup already completed.' })
+  if (await isSetupComplete()) throwAndLogTRPCError('FORBIDDEN', 'Setup already completed.', 'Someone tried to access a setup route after setup was completed')
 
   return next({ ctx })
 })
