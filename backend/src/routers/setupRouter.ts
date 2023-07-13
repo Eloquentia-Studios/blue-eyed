@@ -1,15 +1,9 @@
-import { TRPCError } from '@trpc/server'
-import setupProcedure from '../procedures/setupProcedure'
-import { completeSetup, isSetupComplete } from '../services/setup'
+import isSetupComplete from '../routes/setup/isSetupCompleteRoute'
+import setupAdmin from '../routes/setup/setupAdminRoute'
 import { t } from '../services/trpc'
-import { UserRegistrationSchema, createUser } from '../services/user'
 
 export const setupRouter = t.router({
-  setupAdmin: setupProcedure.input(UserRegistrationSchema).mutation(async ({ ctx, input }) => {
-    const user = await createUser(input)
-    if (!user) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Failed to create user.' })
+  setupAdmin,
 
-    await completeSetup()
-  }),
-  setupIncomplete: t.procedure.query(async () => !(await isSetupComplete()))
+  isSetupComplete
 })
