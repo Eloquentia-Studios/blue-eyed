@@ -5,17 +5,17 @@
   import Loader from '../../components/Loader.svelte'
   import Modal from '../../components/Modal.svelte'
   import UserListItem from '../../components/UserListItem.svelte'
-  import trpc from '../../services/trpc'
+  import { createUserInvitation } from '../../services/invitation'
+  import { getUsers } from '../../services/user'
 
-  const client = trpc()
-  const getUsers = client.getUsers.createQuery()
-  const createUserInvitation = client.createUserInvitation.createMutation()
+  const users = getUsers()
+  const doCreateUserInvitation = createUserInvitation()
 
   let inviteLink = ''
   let invitationOpen = false
 
   const inviteUser = async () => {
-    const invitationToken = await $createUserInvitation.mutateAsync()
+    const invitationToken = await $doCreateUserInvitation.mutateAsync()
     inviteLink = `${window.location.origin}/register?invitationToken=${encodeURIComponent(invitationToken)}`
     invitationOpen = true
   }
@@ -33,12 +33,12 @@
   </div>
 
   <div class="flex flex-col p-2 rounded-md bg-slate-900">
-    {#if $getUsers.isLoading}
+    {#if $users.isLoading}
       <Loader />
-    {:else if $getUsers.error}
+    {:else if $users.error}
       <ErrorMessage errorMessage="Could not load users" />
     {:else}
-      {#each $getUsers.data as user}
+      {#each $users.data as user}
         <UserListItem {user} />
       {/each}
     {/if}

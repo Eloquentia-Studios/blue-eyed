@@ -35,7 +35,7 @@ export const createRedirectToken = async (token: string) => {
 
 export const getAuthorizedTokenFromRedirect = async (redirectToken: string) => {
   const token = await getCache<string>(redirectToken)
-  if (!token || typeof token === 'string') throw new Error('Invalid redirect token')
+  if (!token || typeof token !== 'string') return null
   return token
 }
 

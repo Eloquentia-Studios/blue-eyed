@@ -1,27 +1,23 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import parseTRPCError from '$lib/parseTRPCError'
-  import { onMount } from 'svelte'
   import Button from '../../../components/Button.svelte'
   import CenteredContainerForm from '../../../components/CenteredContainerForm.svelte'
   import ErrorMessage from '../../../components/ErrorMessage.svelte'
   import HorizontalDivider from '../../../components/HorizontalDivider.svelte'
   import Input from '../../../components/Input.svelte'
-  import trpc from '../../../services/trpc'
+  import { createUser } from '../../../services/user'
 
   const invitationToken = $page.url.searchParams.get('invitationToken')
+  if (!invitationToken) window.location.href = '/'
 
-  const registerUser = trpc().registerUser.createMutation()
+  const registerUser = createUser()
 
   let errorMessage: string | undefined = undefined
   let invalidFields: { [key: string]: string } = {}
   let username: string = ''
   let email: string = ''
   let password: string = ''
-
-  onMount(async () => {
-    if (!invitationToken) window.location.href = '/'
-  })
 
   const handleSubmit = async () => {
     if (!invitationToken) return (errorMessage = 'Invalid invitation token')

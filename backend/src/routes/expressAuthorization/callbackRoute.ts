@@ -13,12 +13,12 @@ const callbackRoute = async (req: Request, res: Response) => {
     if (typeof redirect !== 'string') return res.status(400).send('Invalid redirect')
 
     const token = await getAuthorizedTokenFromRedirect(redirectToken)
-
     if (!token) return res.status(400).send('Invalid redirect token')
 
     res.set('Set-Cookie', `blue-eyed-token=${token}; Path=/; Max-Age=${sessionTime.cache}; HttpOnly; Secure;`)
     res.redirect(redirect)
   } catch (err) {
+    console.error(err)
     if (err instanceof TRPCError) {
       const error = trpcToExpressError(err)
       return res.status(error.status).send(error.message)
