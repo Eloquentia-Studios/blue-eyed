@@ -1,29 +1,25 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import parseTRPCError from '$lib/parseTRPCError'
-  import { onMount } from 'svelte'
   import Button from '../../../components/Button.svelte'
   import CenteredContainerForm from '../../../components/CenteredContainerForm.svelte'
   import ErrorMessage from '../../../components/ErrorMessage.svelte'
   import HorizontalDivider from '../../../components/HorizontalDivider.svelte'
   import Input from '../../../components/Input.svelte'
-  import trpc from '../../../services/trpc'
+  import { resetPassword } from '../../../services/user'
 
-  const resetUserPassword = trpc().resetUserPassword.createMutation()
+  let resetToken = $page.url.searchParams.get('resetToken')
+  if (!resetToken) window.location.href = '/'
+
+  const resetUserPassword = resetPassword()
 
   let errorMessage: string | undefined = undefined
   let invalidFields: { [key: string]: string } = {}
-  let resetToken = $page.url.searchParams.get('resetToken')
   let password: string = ''
   let confirmPassword: string = ''
 
-  onMount(async () => {
-    if (!resetToken) window.location.href = '/'
-  })
-
   const handleSubmit = async () => {
     if (!resetToken) return (errorMessage = 'Invalid reset token')
-
     if (password !== confirmPassword) return (errorMessage = 'Passwords do not match')
 
     $resetUserPassword

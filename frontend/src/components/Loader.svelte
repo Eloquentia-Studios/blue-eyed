@@ -2,4 +2,4 @@
   import Icon from '@iconify/svelte'
 </script>
 
-<Icon class="{$$props.class} m-auto" icon="eos-icons:three-dots-loading" />
+<Icon class="m-auto {$$props.class}" icon="eos-icons:three-dots-loading" />

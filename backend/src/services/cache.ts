@@ -10,10 +10,7 @@ export const initCache = async () => {
   return client.connect()
 }
 
-interface CacheOptions {
-  ttl?: number
-}
-
+type CacheOptions = { ttl?: number }
 export const setCache = async (key: string, value: any, options: CacheOptions = {}) => {
   const res = client.set(key, JSON.stringify(value), { EX: options.ttl })
   if (!res) throw new Error('Failed to set cache')

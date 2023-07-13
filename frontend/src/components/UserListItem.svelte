@@ -1,7 +1,6 @@
 <script lang="ts">
   import type { RouterOutput } from '../services/trpc'
-  import trpc from '../services/trpc'
-  import { getCurrentUser, useDeleteUser } from '../services/user'
+  import { deleteUser, getCurrentUser, requestPasswordReset } from '../services/user'
   import ConfirmDialog from './ConfirmDialog.svelte'
   import CopyField from './CopyField.svelte'
   import IconButton from './IconButton.svelte'
@@ -10,8 +9,8 @@
   import Modal from './Modal.svelte'
   import PopoutMenu from './PopoutMenu.svelte'
 
-  const deleteUserMutation = useDeleteUser()
-  const requestPasswordReset = trpc().requestPasswordReset.createMutation()
+  const deleteUserMutation = deleteUser()
+  const requestPasswordResetMutation = requestPasswordReset()
   const currentUser = getCurrentUser()
 
   export let user: RouterOutput['getUsers'][number]
@@ -22,20 +21,20 @@
   let resetPasswordOpen = false
   let resetLink = ''
   const resetPassword = async () => {
-    const resetToken = await $requestPasswordReset.mutateAsync(user.id)
+    const resetToken = await $requestPasswordResetMutation.mutateAsync(user.id)
     resetLink = `${window.location.origin}/reset?resetToken=${encodeURIComponent(resetToken)}`
     resetPasswordOpen = true
   }
 
   let deleteOpen = false
   const openDelete = () => (deleteOpen = true)
-  const deleteUser = async () => $deleteUserMutation.mutate(user.id)
+  const doDeleteUser = async () => $deleteUserMutation.mutate(user.id)
 
   let cannotDeleteUser = false
   $: cannotDeleteUser = $currentUser.isLoading || $currentUser.isError || $currentUser.data?.id === user.id
 </script>
 
-<ConfirmDialog confirm={deleteUser} title="Are you sure you want to delete {user.displayName}?" bind:open={deleteOpen} destructive />
+<ConfirmDialog confirm={doDeleteUser} title="Are you sure you want to delete {user.displayName}?" bind:open={deleteOpen} destructive />
 
 <Modal bind:open={resetPasswordOpen}>
   <h4 class="text-lg font-bold">Reset link for {user.displayName}</h4>

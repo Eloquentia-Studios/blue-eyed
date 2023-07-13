@@ -1,26 +1,10 @@
-import prisma from './prisma'
+import { getFlag, setFlag } from './flag'
 
-export const isSetupComplete = async () => {
-  const status = await prisma.status.findUnique({
-    where: {
-      name: 'setupComplete'
-    }
-  })
-
-  return status && status.value === 'true'
+enum Setup {
+  complete = 1,
+  incomplete = 0
 }
 
-export const completeSetup = async () => {
-  await prisma.status.upsert({
-    where: {
-      name: 'setupComplete'
-    },
-    update: {
-      value: 'true'
-    },
-    create: {
-      name: 'setupComplete',
-      value: 'true'
-    }
-  })
-}
+export const isSetupComplete = async () => (await getFlag('setup')) === Setup.complete
+
+export const completeSetup = async () => setFlag('setup', Setup.complete)

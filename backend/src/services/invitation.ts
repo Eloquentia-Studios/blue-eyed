@@ -8,9 +8,6 @@ export const generateInvitationToken = async () => {
   return token
 }
 
-export const validateInvitationToken = async (token: string) => {
-  const result = await getCache<boolean>(token)
-  return !!result
-}
+export const validateInvitationToken = async (token: string) => ((await getCache<boolean>(token)) ? true : false)
 
 export const invalidateInvitationToken = async (token: string) => deleteCache(token)

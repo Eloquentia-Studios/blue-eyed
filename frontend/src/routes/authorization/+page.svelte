@@ -7,19 +7,17 @@
   import Input from '../../components/Input.svelte'
   import Loader from '../../components/Loader.svelte'
   import parseTRPCError from '../../lib/parseTRPCError'
-  import trpc from '../../services/trpc'
-  import { getCurrentUser } from '../../services/user'
+  import { authorizeUser, getCurrentUser, getRedirectToken } from '../../services/user'
 
   const redirect = $page.url.searchParams.get('redirect')
 
-  const client = trpc()
-  const getRedirectToken = client.getRedirectToken.createMutation()
-  const authorize = client.authorize.createMutation()
+  const redirectToken = getRedirectToken()
+  const authorize = authorizeUser()
   const currentUser = getCurrentUser()
 
   $: if ($currentUser.error) window.location.href = '/500'
   $: if ($currentUser.data) {
-    $getRedirectToken
+    $redirectToken
       .mutateAsync()
       .then(({ redirectToken }) => {
         if (redirect) window.location.href = `${redirect}/auth.blue-eyed/callback?redirectToken=${redirectToken}&redirect=${encodeURIComponent(redirect)}`
@@ -51,7 +49,7 @@
 </script>
 
 <CenteredContainerWithLogo>
-  {#if $currentUser.isLoading || $getRedirectToken.isLoading}
+  {#if $currentUser.isLoading || $redirectToken.isLoading}
     <Loader class="w-12 h-12 sm:w-20 sm:h-20 md:w-24 md:h-24" />
   {:else}
     <CenteredContainerForm on:submit={submit}>

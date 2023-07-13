@@ -5,9 +5,9 @@
   import HorizontalDivider from '../../../components/HorizontalDivider.svelte'
   import Input from '../../../components/Input.svelte'
   import parseTRPCError from '../../../lib/parseTRPCError'
-  import trpc from '../../../services/trpc'
+  import { setupAdminUser } from '../../../services/setup'
 
-  const setupAdmin = trpc().setupAdmin.createMutation()
+  const createAdmin = setupAdminUser()
 
   let errorMessage: string | undefined = undefined
   let invalidFields: { [key: string]: string } = {}
@@ -16,7 +16,7 @@
   let password = ''
 
   const handleSubmit = () => {
-    $setupAdmin
+    $createAdmin
       .mutateAsync({ username, email, password })
       .then(() => (window.location.href = '/'))
       .catch((err) => {

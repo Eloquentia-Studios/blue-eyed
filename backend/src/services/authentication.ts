@@ -8,7 +8,7 @@ import { getLastPasswordReset, getUserById } from './user'
 
 const userTokenSchema = z.object({
   userId: z.string().uuid(),
-  createdAt: z.number().positive()
+  createdAt: z.number().positive().int()
 })
 
 type UserTokenData = z.infer<typeof userTokenSchema>
@@ -24,12 +24,7 @@ export const createAuthorizedToken = async (userId: string) => {
   return token
 }
 
-export const validateAuthorizedToken = async (token: string) => {
-  const res = await getUserTokenData(token)
-  if (!res) return false
-
-  return true
-}
+export const validateAuthorizedToken = async (token: string) => ((await getUserTokenData(token)) ? true : false)
 
 export const createRedirectToken = async (token: string) => {
   const redirectToken = generateRandomString(32)
@@ -40,7 +35,7 @@ export const createRedirectToken = async (token: string) => {
 
 export const getAuthorizedTokenFromRedirect = async (redirectToken: string) => {
   const token = await getCache<string>(redirectToken)
-  if (!token) throw new Error('Invalid redirect token')
+  if (!token || typeof token !== 'string') return null
   return token
 }
 
