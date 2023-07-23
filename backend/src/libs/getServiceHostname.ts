@@ -1,4 +1,4 @@
-import { ENV } from '../services/env'
+import { ENV } from '../env'
 
 const getServiceHostname = () => {
   const HOSTNAME = ENV.SERVICE_HOSTNAME

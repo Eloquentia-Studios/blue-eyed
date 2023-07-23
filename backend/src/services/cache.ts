@@ -1,5 +1,5 @@
 import { createClient } from 'redis'
-import { ENV } from './env'
+import { ENV } from '../env'
 
 let client: ReturnType<typeof createClient>
 
