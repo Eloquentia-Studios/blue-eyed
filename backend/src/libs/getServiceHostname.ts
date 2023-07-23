@@ -1,5 +1,7 @@
+import { ENV } from '../services/env'
+
 const getServiceHostname = () => {
-  const HOSTNAME = process.env.SERVICE_HOSTNAME
+  const HOSTNAME = ENV.SERVICE_HOSTNAME
   if (!HOSTNAME) throw new Error('SERVICE_HOSTNAME not set')
   return HOSTNAME
 }

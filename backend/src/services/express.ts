@@ -4,6 +4,7 @@ import express from 'express'
 import { appRouter } from '../routers/appRouter'
 import expressAuthorizationRouter from '../routers/expressAuthorizationRouter'
 import proxyAuthRouter from '../routers/proxyAuthRouter'
+import { ENV } from './env'
 import { createContext } from './trpc'
 
 export const initExpress = () => {
@@ -22,8 +23,7 @@ export const initExpress = () => {
 
   setupStaticServer(app)
 
-  const PORT = process.env.PORT || 3000
-  app.listen(PORT, () => console.log('Listening on port 3000'))
+  app.listen(ENV.PORT, () => console.log(`Listening on port ${ENV.PORT}`))
 }
 
 const setupStaticServer = (app: Express) => {
