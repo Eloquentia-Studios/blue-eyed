@@ -1,10 +1,11 @@
 import { createClient } from 'redis'
+import { ENV } from '../env'
 
 let client: ReturnType<typeof createClient>
 
 export const initCache = async () => {
   client = createClient({
-    url: process.env.REDIS_URL
+    url: ENV.REDIS_URL
   })
   client.on('error', (err) => console.log('Redis Client Error', err))
   return client.connect()
