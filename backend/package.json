@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "",
   "type": "module",
   "main": "app.js",
@@ -28,6 +28,7 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "redis": "^4.6.7",
+    "winston": "^3.10.0",
     "zod": "^3.21.4"
   }
 }
