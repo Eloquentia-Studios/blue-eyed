@@ -33,8 +33,8 @@ export const getCache = async <T>(key: string) => {
     return null
   }
 
+  logger.debug(`Got cache value for key ${key}: ${value}`)
   const data = JSON.parse(value) as T
-  logger.debug(`Got cache value for key ${key}: ${data}`)
   return data
 }
 

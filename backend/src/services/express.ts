@@ -26,8 +26,8 @@ export const initExpress = () => {
 
   setupStaticServer(app)
 
-  logger.debug(`Trying to listen on port ${PORT}`)
-  app.listen(ENV.PORT, () => console.log(`Listening on port ${ENV.PORT}`))
+  logger.debug(`Trying to listen on port ${ENV.PORT}`)
+  app.listen(ENV.PORT, () => logger.info(`Listening on port ${ENV.PORT}`))
 }
 
 const setupStaticServer = (app: Express) => {
