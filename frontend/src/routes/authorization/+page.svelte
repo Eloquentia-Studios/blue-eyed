@@ -14,9 +14,12 @@
   const redirectToken = getRedirectToken()
   const authorize = authorizeUser()
   const currentUser = getCurrentUser()
+  let alreadyRunRedirect = false
 
   $: if ($currentUser.error) window.location.href = '/500'
-  $: if ($currentUser.data) {
+  $: if ($currentUser.data) doRedirect() // Executed multiple times if redirectToken is directly in the reactive statement. This is a workaround.
+
+  const doRedirect = () => {
     $redirectToken
       .mutateAsync()
       .then(({ redirectToken }) => {

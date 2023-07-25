@@ -17,7 +17,7 @@ type CacheOptions = { ttl?: number }
 export const setCache = async (key: string, value: any, options: CacheOptions = {}) => {
   const stringifiedValue = JSON.stringify(value)
   logger.debug(`Setting cache for key ${key}, with options: ${JSON.stringify(options)} and value: ${stringifiedValue}`)
-  const res = await client.set(key, JSON.stringify(stringifiedValue), { EX: options.ttl })
+  const res = await client.set(key, stringifiedValue, { EX: options.ttl })
 
   if (!res) {
     logger.error(`Failed to set cache for key ${key}, got response: ${res}`)
