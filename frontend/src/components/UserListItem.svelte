@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { canDeleteUser } from '../services/permission'
+  import { canDeleteUser, canResetPassword } from '../services/permission'
   import type { RouterOutput } from '../services/trpc'
   import { deleteUser, getCurrentUser, requestPasswordReset } from '../services/user'
   import ConfirmDialog from './ConfirmDialog.svelte'
@@ -14,6 +14,7 @@
   const requestPasswordResetMutation = requestPasswordReset()
   const currentUser = getCurrentUser()
   const canDeleteUserQuery = canDeleteUser()
+  const canResetPasswordQuery = canResetPassword()
 
   export let user: RouterOutput['getUsers'][number]
 
@@ -37,6 +38,9 @@
 
   let hideDelete = true
   $: hideDelete = $canDeleteUserQuery.isLoading || $canDeleteUserQuery.isError || !$canDeleteUserQuery.data
+
+  let hideReset = true
+  $: hideReset = $canResetPasswordQuery.isLoading || $canResetPasswordQuery.isError || !$canResetPasswordQuery.data
 </script>
 
 <ConfirmDialog confirm={doDeleteUser} title="Are you sure you want to delete {user.displayName}?" bind:open={deleteOpen} destructive />
@@ -53,24 +57,31 @@
     <span class="text-sm text-gray-500 sm:text-base">{user.email}</span>
   </div>
 
-  <div class="flex-row hidden gap-2 sm:flex">
-    <IconTextButton on:click={resetPassword} icon="mdi:lock-reset" title="Reset password" />
+  {#if !hideReset && !hideDelete}
+    <div class="flex-row hidden gap-2 sm:flex">
+      {#if !hideReset}
+        <IconTextButton on:click={resetPassword} icon="mdi:lock-reset" title="Reset password" />
+      {/if}
 
-    {#if !hideDelete}
-      <IconTextButton on:click={openDelete} class="bg-red-600" icon="bi:trash-fill" title="Remove" disabled={cannotDeleteUser} />
-    {/if}
-  </div>
+      {#if !hideDelete}
+        <IconTextButton on:click={openDelete} class="bg-red-600" icon="bi:trash-fill" title="Remove" disabled={cannotDeleteUser} />
+      {/if}
+    </div>
 
-  <div class="relative sm:hidden">
-    <IconButton on:click={toggleMenu} icon="bi:three-dots" iconClass="w-5 h-5" />
+    <div class="relative sm:hidden">
+      <IconButton on:click={toggleMenu} icon="bi:three-dots" iconClass="w-5 h-5" />
 
-    {#if isMenuOpen}
-      <PopoutMenu on:clickoutside={toggleMenu}>
-        <MenuButton on:click={resetPassword} icon="mdi:lock-reset" title="Reset password" />
-        {#if !hideDelete}
-          <MenuButton on:click={openDelete} class="bg-red-600" icon="bi:trash-fill" title="Remove" disabled={cannotDeleteUser} />
-        {/if}
-      </PopoutMenu>
-    {/if}
-  </div>
+      {#if isMenuOpen}
+        <PopoutMenu on:clickoutside={toggleMenu}>
+          {#if !hideReset}
+            <MenuButton on:click={resetPassword} icon="mdi:lock-reset" title="Reset password" />
+          {/if}
+
+          {#if !hideDelete}
+            <MenuButton on:click={openDelete} class="bg-red-600" icon="bi:trash-fill" title="Remove" disabled={cannotDeleteUser} />
+          {/if}
+        </PopoutMenu>
+      {/if}
+    </div>
+  {/if}
 </div>
