@@ -41,7 +41,7 @@ export const verifyUser = async (id: string, password: string) => {
   return true
 }
 
-export const createUser = async (info: UserRegistrationInput, roleIds: string[]) => {
+export const createUser = async (info: UserRegistrationInput, roleIds: string[] = []) => {
   if (!UserRegistrationSchema.safeParse(info).success) {
     logger.error('Invalid user information was passed to createUser.')
     throw new Error('Invalid user registration information.')

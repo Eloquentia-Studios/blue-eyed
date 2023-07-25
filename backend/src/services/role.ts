@@ -1,4 +1,4 @@
-import { Permission } from '@prisma/client'
+import type { Permission } from '@prisma/client'
 import logger from './logging'
 import { allPermissions } from './permission'
 import prisma from './prisma'
