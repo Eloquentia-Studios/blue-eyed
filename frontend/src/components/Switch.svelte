@@ -20,6 +20,6 @@
   <div class="relative">
     <input on:change={onChange} id="{label}-switch" type="checkbox" class="sr-only" {disabled} bind:checked />
     <div class="block w-12 h-6 transition-colors duration-200 ease-in-out bg-gray-600 rounded-full" class:brightness-50={disabled} class:bg-primary-600={checked} />
-    <div class="absolute w-4 h-4 transition-transform transform bg-white rounded-full left-1 top-1" class:brightness-50={disabled} class:translate-x-6={checked} />
+    <div class="absolute w-4 h-4 transition-all transform bg-white rounded-full left-1 top-1" class:brightness-50={disabled} class:translate-x-6={checked} />
   </div>
 </label>

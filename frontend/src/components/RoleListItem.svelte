@@ -23,7 +23,7 @@
 
   {#if open && $allPermissions.data}
     <div transition:slide class="grid grid-cols-1 gap-4 p-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      {#each $allPermissions.data as permission (permission)}
+      {#each $allPermissions.data as permission}
         <RolePermissionSwitch {role} {permission} />
       {/each}
     </div>
