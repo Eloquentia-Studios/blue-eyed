@@ -9,7 +9,7 @@
   export let role: RouterOutput['getAllRoles'][number]
 
   const handleChange = (enabled: boolean) => {
-    $updateRolePermission.mutateAsync({
+    $updateRolePermission.mutate({
       enabled,
       roleId: role.id,
       permission: permission

@@ -99,6 +99,9 @@ export const getUsers = async () => {
       id: true,
       displayName: true,
       email: true
+    },
+    orderBy: {
+      displayName: 'desc'
     }
   })
 
