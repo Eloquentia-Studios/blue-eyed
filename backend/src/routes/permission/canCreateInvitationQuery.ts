@@ -1,5 +1,5 @@
-import permissionProcedure from '../../procedures/permissionProcedure'
+import { permissionCheckQuery } from '../common/permissionCheckQuery'
 
-const canCreateInvitationQuery = permissionProcedure(['USERS_INVITE']).query(() => true)
+const canCreateInvitationQuery = permissionCheckQuery('USERS_INVITE')
 
 export default canCreateInvitationQuery

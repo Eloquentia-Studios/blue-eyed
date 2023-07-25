@@ -1,5 +1,5 @@
-import permissionProcedure from '../../procedures/permissionProcedure'
+import { permissionCheckQuery } from '../common/permissionCheckQuery'
 
-const canDeleteUserQuery = permissionProcedure(['USERS_DELETE']).query(() => true)
+const canDeleteUserQuery = permissionCheckQuery('USERS_DELETE')
 
 export default canDeleteUserQuery
