@@ -1,4 +1,4 @@
-import { Permission } from '@prisma/client'
+import type { Permission } from '@prisma/client'
 import { z } from 'zod'
 import permissionProcedure from '../../procedures/permissionProcedure'
 import { allPermissions, changeRolePermission } from '../../services/permission'

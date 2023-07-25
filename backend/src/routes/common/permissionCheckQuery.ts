@@ -1,4 +1,4 @@
-import { Permission } from '@prisma/client'
+import type { Permission } from '@prisma/client'
 import authenticatedProcedure from '../../procedures/authenticatedProcedure'
 import { userHasPermissions } from '../../services/permission'
 
