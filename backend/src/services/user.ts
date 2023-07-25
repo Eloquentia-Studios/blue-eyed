@@ -41,7 +41,7 @@ export const verifyUser = async (id: string, password: string) => {
   return true
 }
 
-export const createUser = async (info: UserRegistrationInput) => {
+export const createUser = async (info: UserRegistrationInput, roleIds: string[]) => {
   if (!UserRegistrationSchema.safeParse(info).success) {
     logger.error('Invalid user information was passed to createUser.')
     throw new Error('Invalid user registration information.')
@@ -53,7 +53,10 @@ export const createUser = async (info: UserRegistrationInput) => {
       ...info,
       username: info.username.toLowerCase(),
       displayName: info.username,
-      password: await hashPassword(info.password)
+      password: await hashPassword(info.password),
+      roles: {
+        connect: [...roleIds.map((role) => ({ id: role })), { name: 'User' }] // TODO: Make user role configurable
+      }
     }
   })
 }
