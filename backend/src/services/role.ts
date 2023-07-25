@@ -63,3 +63,24 @@ export const createDefaultRoles = async () => {
 
   logger.info('Default roles created')
 }
+
+export const getUserRoles = async (userId: string) => {
+  // I didn't really know where to put this, so I put it here. But it could also be in the user service.
+
+  logger.debug(`Getting roles for user ${userId}`)
+  const roles = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      roles: true
+    }
+  })
+
+  if (!roles) {
+    logger.debug(`Could not find roles for user ${userId}`)
+    return []
+  }
+
+  logger.debug(`Found roles for user ${userId}`)
+
+  return roles ? roles.roles : []
+}
