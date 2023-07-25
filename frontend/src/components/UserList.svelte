@@ -30,7 +30,7 @@
     {#if $canInviteUser.data}
       <IconTextButton on:click={inviteUser} icon="ic:round-plus" iconClass="w-6 h-6" title="Add User" />
       <Modal bind:open={invitationOpen}>
-        <h4 class="text-lg font-bold">Invitation link</h4>
+        <h4 class="text-lg font-bold">Invitation Link</h4>
         <p class="text-sm text-gray-400">The link is automatically copied to your clipboard.</p>
         <CopyField value={inviteLink} copyOnMount />
       </Modal>

@@ -7,6 +7,8 @@ export const canResetPassword = () => trpc().canResetPassword.createQuery()
 
 export const canCreateInvitation = () => trpc().canCreateInvitation.createQuery()
 
+export const canWriteRoles = () => trpc().canWriteRoles.createQuery()
+
 export const canReadRoles = () => trpc().canReadRoles.createQuery()
 
 export const getAllPermissions = () => trpc().getAllPermissions.createQuery()

@@ -8,6 +8,7 @@
   export let readonly: boolean = false
   export let focused: boolean = false
   export let noAutoComplete: boolean = false
+  export let disabled: boolean = false
 
   export let inputElement: HTMLInputElement | null = null
 
@@ -27,10 +28,12 @@
   <input
     class="px-4 py-2 text-gray-400 transition-all border border-gray-700 rounded-md bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
     class:border-red-500={error ? true : false}
+    class:brightness-50={disabled}
     id={label}
     {type}
     {value}
     {readonly}
+    {disabled}
     on:input={onInput}
     on:focus
     bind:this={inputElement}
