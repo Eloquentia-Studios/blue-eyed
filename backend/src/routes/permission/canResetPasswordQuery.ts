@@ -1,5 +1,5 @@
 import permissionProcedure from '../../procedures/permissionProcedure'
 
-const canDeletePasswordQuery = permissionProcedure(['RESET_USER_PASSWORD']).query(() => true)
+const canDeletePasswordQuery = permissionProcedure(['USERS_INVITE']).query(() => true)
 
 export default canDeletePasswordQuery

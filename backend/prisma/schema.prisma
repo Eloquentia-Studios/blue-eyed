@@ -35,9 +35,13 @@ model Role {
 }
 
 enum Permission {
-  DELETE_USER
-  INVITE_USER
-  RESET_USER_PASSWORD
+  ROLES_READ
+  ROLES_WRITE
+
+  USERS_READ
+  USERS_INVITE
+  USERS_WRITE
+  USERS_DELETE
 }
 
 model Flag {

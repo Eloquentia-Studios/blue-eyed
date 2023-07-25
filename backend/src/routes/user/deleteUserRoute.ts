@@ -3,7 +3,7 @@ import permissionProcedure from '../../procedures/permissionProcedure'
 import logger from '../../services/logging'
 import { deleteUser } from '../../services/user'
 
-const deleteUserRoute = permissionProcedure(['DELETE_USER'])
+const deleteUserRoute = permissionProcedure(['USERS_DELETE'])
   .input(z.string())
   .mutation(async ({ input: userId }) => {
     logger.verbose(`Trying to delete user with id: ${userId}`)

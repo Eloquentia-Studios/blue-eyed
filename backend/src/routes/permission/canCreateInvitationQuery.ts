@@ -1,5 +1,5 @@
 import permissionProcedure from '../../procedures/permissionProcedure'
 
-const canCreateInvitationQuery = permissionProcedure(['INVITE_USER']).query(() => true)
+const canCreateInvitationQuery = permissionProcedure(['USERS_INVITE']).query(() => true)
 
 export default canCreateInvitationQuery

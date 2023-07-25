@@ -84,3 +84,11 @@ export const getUserRoles = async (userId: string) => {
 
   return roles ? roles.roles : []
 }
+
+export const getAllRoles = async () => {
+  logger.debug('Getting all roles')
+  const roles = await prisma.role.findMany()
+
+  logger.debug(`Found ${roles.length} roles`)
+  return roles
+}

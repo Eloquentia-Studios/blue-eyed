@@ -4,14 +4,17 @@
   import IconTextButton from '../../components/IconTextButton.svelte'
   import Loader from '../../components/Loader.svelte'
   import Modal from '../../components/Modal.svelte'
+  import RoleListItem from '../../components/RoleListItem.svelte'
   import UserListItem from '../../components/UserListItem.svelte'
   import { createUserInvitation } from '../../services/invitation'
   import { canCreateInvitation } from '../../services/permission'
+  import { getAllRoles } from '../../services/role'
   import { getUsers } from '../../services/user'
 
   const users = getUsers()
   const createUserInvitationMutation = createUserInvitation()
   const canInviteUser = canCreateInvitation()
+  const roles = getAllRoles()
 
   let inviteLink = ''
   let invitationOpen = false
@@ -45,6 +48,24 @@
     {:else}
       {#each $users.data as user}
         <UserListItem {user} />
+      {/each}
+    {/if}
+  </div>
+</div>
+
+<div class="w-screen p-4 lg:w-2/3 2xl:w-1/2 lg:m-auto">
+  <div class="flex flex-row items-center justify-between mb-2">
+    <span class="text-2xl font-bold">Roles</span>
+  </div>
+
+  <div class="flex flex-col p-2 rounded-md bg-slate-900">
+    {#if $roles.isLoading}
+      <Loader />
+    {:else if $roles.error}
+      <ErrorMessage errorMessage="Could not load roles" />
+    {:else}
+      {#each $roles.data as role}
+        <RoleListItem {role} />
       {/each}
     {/if}
   </div>

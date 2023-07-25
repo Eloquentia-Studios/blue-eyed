@@ -3,7 +3,7 @@ import permissionProcedure from '../../procedures/permissionProcedure'
 import logging from '../../services/logging'
 import { generateResetToken } from '../../services/user'
 
-const requestPasswordResetRoute = permissionProcedure(['RESET_USER_PASSWORD'])
+const requestPasswordResetRoute = permissionProcedure(['USERS_INVITE'])
   .input(z.string())
   .mutation(async ({ input: userId }) => {
     logging.verbose('Someone requested a password reset')
