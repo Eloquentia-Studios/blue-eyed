@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { canDeleteUser } from '../services/permission'
   import type { RouterOutput } from '../services/trpc'
   import { deleteUser, getCurrentUser, requestPasswordReset } from '../services/user'
   import ConfirmDialog from './ConfirmDialog.svelte'
@@ -12,6 +13,7 @@
   const deleteUserMutation = deleteUser()
   const requestPasswordResetMutation = requestPasswordReset()
   const currentUser = getCurrentUser()
+  const canDeleteUserQuery = canDeleteUser()
 
   export let user: RouterOutput['getUsers'][number]
 
@@ -31,7 +33,10 @@
   const doDeleteUser = async () => $deleteUserMutation.mutate(user.id)
 
   let cannotDeleteUser = false
-  $: cannotDeleteUser = $currentUser.isLoading || $currentUser.isError || $currentUser.data?.id === user.id
+  $: cannotDeleteUser = $canDeleteUserQuery.isError || $currentUser.isLoading || $currentUser.data?.id === user.id
+
+  let hideDelete = true
+  $: hideDelete = $canDeleteUserQuery.isLoading || $canDeleteUserQuery.isError || !$canDeleteUserQuery.data
 </script>
 
 <ConfirmDialog confirm={doDeleteUser} title="Are you sure you want to delete {user.displayName}?" bind:open={deleteOpen} destructive />
@@ -50,7 +55,10 @@
 
   <div class="flex-row hidden gap-2 sm:flex">
     <IconTextButton on:click={resetPassword} icon="mdi:lock-reset" title="Reset password" />
-    <IconTextButton on:click={openDelete} class="bg-red-600" icon="bi:trash-fill" title="Remove" disabled={cannotDeleteUser} />
+
+    {#if !hideDelete}
+      <IconTextButton on:click={openDelete} class="bg-red-600" icon="bi:trash-fill" title="Remove" disabled={cannotDeleteUser} />
+    {/if}
   </div>
 
   <div class="relative sm:hidden">
@@ -59,7 +67,9 @@
     {#if isMenuOpen}
       <PopoutMenu on:clickoutside={toggleMenu}>
         <MenuButton on:click={resetPassword} icon="mdi:lock-reset" title="Reset password" />
-        <MenuButton on:click={openDelete} class="bg-red-600" icon="bi:trash-fill" title="Remove" disabled={cannotDeleteUser} />
+        {#if !hideDelete}
+          <MenuButton on:click={openDelete} class="bg-red-600" icon="bi:trash-fill" title="Remove" disabled={cannotDeleteUser} />
+        {/if}
       </PopoutMenu>
     {/if}
   </div>
