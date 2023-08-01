@@ -85,6 +85,22 @@ export const getUserRoles = async (userId: string) => {
   return roles ? roles.roles : []
 }
 
+export const setUserRoleStatus = async (userId: string, roleId: string, enabled: boolean) => {
+  logger.debug(`Setting role ${roleId} for user ${userId} to ${enabled}`)
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: {
+      roles: {
+        connect: enabled ? [{ id: roleId }] : [],
+        disconnect: !enabled ? [{ id: roleId }] : []
+      }
+    }
+  })
+
+  logger.debug(`Set role ${roleId} for user ${userId} to ${enabled}`)
+}
+
 export const getAllRoles = async () => {
   logger.debug('Getting all roles')
   const roles = await prisma.role.findMany({

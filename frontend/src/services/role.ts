@@ -15,3 +15,17 @@ export const createRole = () => {
 }
 
 export const getAllRoles = () => trpc().getAllRoles.createQuery()
+
+export const getUserRoles = (userId: string) => trpc().getUserRoles.createQuery({ userId })
+
+export const setUserRoleStatus = () => {
+  const client = trpc()
+  const queryClient = useQueryClient()
+
+  return trpc().setUserRoleStatus.createMutation({
+    onSuccess: (_, variables) => {
+      const userRolesQueryKey = client.getUserRoles.getQueryKey({ userId: variables.userId })
+      queryClient.invalidateQueries(userRolesQueryKey)
+    }
+  })
+}

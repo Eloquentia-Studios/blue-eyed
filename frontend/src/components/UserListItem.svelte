@@ -9,6 +9,7 @@
   import MenuButton from './MenuButton.svelte'
   import Modal from './Modal.svelte'
   import PopoutMenu from './PopoutMenu.svelte'
+  import UserRolesDrawer from './UserRolesDrawer.svelte'
 
   const deleteUserMutation = deleteUser()
   const requestPasswordResetMutation = requestPasswordReset()
@@ -33,6 +34,12 @@
   const openDelete = () => (deleteOpen = true)
   const doDeleteUser = async () => $deleteUserMutation.mutate(user.id)
 
+  let rolesOpen = false
+  const openRoles = () => {
+    isMenuOpen = false
+    rolesOpen = true
+  }
+
   let cannotDeleteUser = false
   $: cannotDeleteUser = $canDeleteUserQuery.isError || $currentUser.isLoading || $currentUser.data?.id === user.id
 
@@ -51,17 +58,21 @@
   <CopyField value={resetLink} copyOnMount />
 </Modal>
 
+<UserRolesDrawer bind:open={rolesOpen} {user} />
+
 <div class="relative flex items-center justify-between p-2 pb-3 pt-3 after:absolute after:left-[5%] after:w-[90%] after:h-[1px] after:bottom-0 after:bg-gray-800 after:block last:after:hidden">
   <div class="flex flex-col sm:flex-row sm:gap-3">
     <span class="font-bold sm:font-semibold">{user.displayName}</span>
     <span class="text-sm text-gray-500 sm:text-base">{user.email}</span>
   </div>
 
-  {#if !hideReset && !hideDelete}
+  {#if !hideReset || !hideDelete}
     <div class="flex-row hidden gap-2 sm:flex">
       {#if !hideReset}
         <IconTextButton on:click={resetPassword} icon="mdi:lock-reset" title="Reset password" />
       {/if}
+
+      <IconTextButton on:click={openRoles} icon="mdi:shield-lock-open-outline" title="Set roles" />
 
       {#if !hideDelete}
         <IconTextButton on:click={openDelete} class="bg-red-600" icon="bi:trash-fill" title="Remove" disabled={cannotDeleteUser} />
@@ -76,6 +87,8 @@
           {#if !hideReset}
             <MenuButton on:click={resetPassword} icon="mdi:lock-reset" title="Reset password" />
           {/if}
+
+          <MenuButton on:click={openRoles} icon="mdi:shield-lock-open-outline" title="Set roles" />
 
           {#if !hideDelete}
             <MenuButton on:click={openDelete} class="bg-red-600" icon="bi:trash-fill" title="Remove" disabled={cannotDeleteUser} />

@@ -11,6 +11,8 @@ export const canWriteRoles = () => trpc().canWriteRoles.createQuery()
 
 export const canReadRoles = () => trpc().canReadRoles.createQuery()
 
+export const canChangeUserRoles = () => trpc().canChangeUserRoles.createQuery()
+
 export const getAllPermissions = () => trpc().getAllPermissions.createQuery()
 
 export const changeRolePermission = () => {

@@ -2,7 +2,7 @@
   import { slide } from 'svelte/transition'
   import { getAllPermissions } from '../services/permission'
   import type { RouterOutput } from '../services/trpc'
-  import DrawerButton from './DrawerButton.svelte'
+  import DropdownButton from './DropdownButton.svelte'
   import RolePermissionSwitch from './RolePermissionSwitch.svelte'
 
   const allPermissions = getAllPermissions()
@@ -18,7 +18,7 @@
       <span class="font-bold sm:font-semibold">{role.name}</span>
       <span class="text-sm text-gray-500 sm:text-base">{role.description ? role.description : ''}</span>
     </div>
-    <DrawerButton bind:open />
+    <DropdownButton bind:open />
   </div>
 
   {#if open && $allPermissions.data}

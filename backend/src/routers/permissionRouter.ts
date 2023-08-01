@@ -5,6 +5,7 @@ import canResetPassword from '../routes/permission/canResetPasswordQuery'
 import canWriteRoles from '../routes/permission/canWriteRolesRoute'
 import getAllPermissions from '../routes/permission/getAllPermissionsQuery'
 import { t } from '../services/trpc'
+import canChangeUserRoles from './../routes/permission/canChangeUserRolesRoute'
 
 export const permissionRouter = t.router({
   getAllPermissions,
@@ -13,5 +14,6 @@ export const permissionRouter = t.router({
   canResetPassword,
   canCreateInvitation,
   canReadRoles,
-  canWriteRoles
+  canWriteRoles,
+  canChangeUserRoles
 })
