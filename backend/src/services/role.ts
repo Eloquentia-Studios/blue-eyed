@@ -64,6 +64,23 @@ export const createDefaultRoles = async () => {
   logger.info('Default roles created')
 }
 
+export const getUsersWithRole = async (roleId: string) => {
+  logger.debug(`Getting users with role ${roleId}`)
+
+  const users = await prisma.user.findMany({
+    where: {
+      roles: {
+        some: {
+          id: roleId
+        }
+      }
+    }
+  })
+
+  logger.debug(`Found ${users.length} users with role ${roleId}`)
+  return users
+}
+
 export const getUserRoles = async (userId: string) => {
   // I didn't really know where to put this, so I put it here. But it could also be in the user service.
 
@@ -87,6 +104,25 @@ export const getUserRoles = async (userId: string) => {
 
 export const setUserRoleStatus = async (userId: string, roleId: string, enabled: boolean) => {
   logger.debug(`Setting role ${roleId} for user ${userId} to ${enabled}`)
+
+  const role = await getRoleById(roleId)
+  if (!role) {
+    logger.debug(`Could not find role with id ${roleId}`)
+    throw new Error('Role not found')
+  }
+
+  if (role.name === 'User') {
+    logger.debug('Cannot change status of User role')
+    throw new Error('Cannot change status of User role')
+  }
+
+  if (role.name === 'SuperAdmin' && !enabled) {
+    const usersWithRole = await getUsersWithRole(roleId)
+    if (usersWithRole.length <= 1) {
+      logger.debug('Cannot remove last SuperAdmin')
+      throw new Error('Cannot remove last SuperAdmin')
+    }
+  }
 
   await prisma.user.update({
     where: { id: userId },

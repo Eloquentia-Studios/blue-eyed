@@ -1,7 +1,9 @@
 <script lang="ts">
   import parseTRPCError from '$lib/parseTRPCError'
+
   import { canChangeUserRoles } from '../services/permission'
   import { getUserRoles, setUserRoleStatus } from '../services/role'
+  import Toast from '../services/toast'
   import type { RouterOutput } from '../services/trpc'
   import Loader from './Loader.svelte'
   import Switch from './Switch.svelte'
@@ -27,24 +29,22 @@
         errorMessage = parseTRPCError(error.message).error
       })
   }
+
+  $: checked = $userRoles.data?.some((a) => a.id === role.id)
+  $: disabled = !$canChangeRoles.data || $setUserRole.isLoading
+
+  $: if (errorMessage) Toast.error(errorMessage)
+  $: if ($userRoles.error) Toast.error($userRoles.error.message)
 </script>
 
 <div class="flex flex-row items-center justify-between">
   <span class="text-lg">{role.name}</span>
 
   {#if $userRoles.data}
-    <Switch on:change={({ detail }) => updateUserRole(role.id, detail.checked)} label="{user.id}-{role.id}" checked={$userRoles.data.some((a) => a.id === role.id)} disabled={!$canChangeRoles.data || $setUserRole.isLoading} />
+    <Switch on:change={({ detail }) => updateUserRole(role.id, detail.checked)} label="{user.id}-{role.id}" {checked} {disabled} />
   {/if}
 
   {#if $userRoles.isLoading}
     <Loader class="m-0 w-6 h-6" />
-  {/if}
-
-  {#if $userRoles.error}
-    <p class="text-red-500">{$userRoles.error.message}</p>
-  {/if}
-
-  {#if errorMessage}
-    <p class="text-red-500">{errorMessage}</p>
   {/if}
 </div>

@@ -72,7 +72,7 @@
         <IconTextButton on:click={resetPassword} icon="mdi:lock-reset" title="Reset password" />
       {/if}
 
-      <IconTextButton on:click={openRoles} icon="mdi:shield-lock-open-outline" title="Set roles" />
+      <IconTextButton on:click={openRoles} icon="mdi:shield-lock-open-outline" title="Roles" />
 
       {#if !hideDelete}
         <IconTextButton on:click={openDelete} class="bg-red-600" icon="bi:trash-fill" title="Remove" disabled={cannotDeleteUser} />
@@ -88,7 +88,7 @@
             <MenuButton on:click={resetPassword} icon="mdi:lock-reset" title="Reset password" />
           {/if}
 
-          <MenuButton on:click={openRoles} icon="mdi:shield-lock-open-outline" title="Set roles" />
+          <MenuButton on:click={openRoles} icon="mdi:shield-lock-open-outline" title="Roles" />
 
           {#if !hideDelete}
             <MenuButton on:click={openDelete} class="bg-red-600" icon="bi:trash-fill" title="Remove" disabled={cannotDeleteUser} />

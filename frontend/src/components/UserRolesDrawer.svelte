@@ -19,7 +19,9 @@
   {#if $roles.data}
     <div class="flex flex-col gap-2">
       {#each $roles.data as role}
-        <UserRoleSwitch {user} {role} />
+        {#if role.name !== 'User'}
+          <UserRoleSwitch {user} {role} />
+        {/if}
       {/each}
     </div>
   {/if}

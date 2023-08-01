@@ -29,6 +29,7 @@
     "@tanstack/svelte-query": "^4.29.19",
     "@trpc/client": "^10.33.0",
     "@trpc/server": "^10.33.0",
+    "notiflix": "^3.2.6",
     "trpc-svelte-query-adapter": "^2.1.0"
   }
 }
