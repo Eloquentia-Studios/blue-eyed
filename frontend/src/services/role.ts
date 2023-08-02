@@ -29,3 +29,16 @@ export const setUserRoleStatus = () => {
     }
   })
 }
+
+export const deleteRole = () => {
+  const client = trpc()
+  const queryClient = useQueryClient()
+
+  const getAllRolesQueryKey = client.getAllRoles.getQueryKey()
+
+  return trpc().deleteRole.createMutation({
+    onSuccess: () => {
+      queryClient.invalidateQueries(getAllRolesQueryKey)
+    }
+  })
+}

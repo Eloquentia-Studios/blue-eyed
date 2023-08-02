@@ -1,5 +1,6 @@
 import changeRolePermission from '../routes/role/changeRolePermissionRoute'
 import createRole from '../routes/role/createRoleRoute'
+import deleteRole from '../routes/role/deleteRoleRoute'
 import getAllRoles from '../routes/role/getAllRolesQuery'
 import { t } from '../services/trpc'
 import getUserRoles from './../routes/role/getUserRolesRoute'
@@ -12,5 +13,7 @@ export const roleRouter = t.router({
   getUserRoles,
 
   changeRolePermission,
-  setUserRoleStatus
+  setUserRoleStatus,
+
+  deleteRole
 })

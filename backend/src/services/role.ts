@@ -148,3 +148,29 @@ export const getAllRoles = async () => {
   logger.debug(`Found ${roles.length} roles`)
   return roles
 }
+
+export const deleteRole = async (roleId: string) => {
+  logger.debug(`Deleting role ${roleId}`)
+
+  const role = await getRoleById(roleId)
+  if (!role) {
+    logger.debug(`Could not find role with id ${roleId}`)
+    throw new Error('Role not found')
+  }
+
+  if (role.name === 'User') {
+    logger.debug('Cannot delete User role')
+    throw new Error('Cannot delete User role')
+  }
+
+  if (role.name === 'SuperAdmin') {
+    logger.debug('Cannot delete SuperAdmin role')
+    throw new Error('Cannot delete SuperAdmin role')
+  }
+
+  await prisma.role.delete({
+    where: { id: roleId }
+  })
+
+  logger.debug(`Deleted role ${roleId}`)
+}
