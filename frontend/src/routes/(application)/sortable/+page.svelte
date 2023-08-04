@@ -4,6 +4,7 @@
 
   let items = Array.from({ length: 10 }, (_, i) => `Item ${i}`)
   const onFinalize = (event: SortEvent<string>) => {
+    console.log(event.detail)
     const { items: newItems } = event.detail
     items = newItems
   }
@@ -15,7 +16,7 @@
   </div>
 
   <div class="flex flex-col p-4 bg-orange-900 rounded-lg gap-2">
-    {#each items as item}
+    {#each items as item (item)}
       <div class="p-2 bg-gray-800 rounded-lg select-none w-24 h-12 flex items-center justify-around">{item}</div>
     {/each}
   </div>
