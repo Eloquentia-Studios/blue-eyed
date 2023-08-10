@@ -3,7 +3,7 @@ import logger from './logging'
 import { allPermissions } from './permission'
 import prisma, { PrismaTransactionClient } from './prisma'
 
-export const createRole = async (name: string, previous?: string, permissions: Permission[] = []) => {
+export const createRole = async (name: string, previous?: string, permissions: Permission[] = [], lockedPosition?: boolean) => {
   if (permissions.length === 0) {
     logger.verbose(`Creating role ${name} with no permissions`)
   } else {
@@ -13,6 +13,7 @@ export const createRole = async (name: string, previous?: string, permissions: P
   const role = await prisma.role.create({
     data: {
       name,
+      lockedPosition,
       permissions: {
         set: permissions
       },
@@ -33,6 +34,11 @@ export const moveRoleBefore = async (roleId: string, nextId: string) =>
     if (!role) {
       logger.debug(`Could not find role with id ${roleId}`)
       throw new Error('Role not found')
+    }
+
+    if (role.lockedPosition) {
+      logger.debug(`Role ${roleId} is locked`)
+      throw new Error('Role is locked')
     }
 
     if (role.previous && role.next) await connectRoles(tx, role.previous, role.next)
