@@ -1,7 +1,7 @@
-import type { Permission } from '@prisma/client'
+import type { Permission, PrismaClient, Role } from '@prisma/client'
 import logger from './logging'
 import { allPermissions } from './permission'
-import prisma from './prisma'
+import prisma, { PrismaTransactionClient } from './prisma'
 
 export const createRole = async (name: string, previous?: string, permissions: Permission[] = []) => {
   if (permissions.length === 0) {
@@ -25,10 +25,39 @@ export const createRole = async (name: string, previous?: string, permissions: P
   return role
 }
 
+export const moveRoleBefore = async (roleId: string, nextId: string) =>
+  prisma.$transaction(async (tx) => {
+    logger.debug(`Moving role ${roleId} before ${nextId}`)
+
+    const role = await getRoleById(roleId)
+    if (!role) {
+      logger.debug(`Could not find role with id ${roleId}`)
+      throw new Error('Role not found')
+    }
+
+    if (role.previous && role.next) await connectRoles(tx, role.previous, role.next)
+    await disconnectRole(tx, role)
+
+    const nextRole = await getRoleById(nextId)
+    if (!nextRole) {
+      logger.debug(`Could not find role with id ${nextId}`)
+      throw new Error('Role not found')
+    }
+
+    await connectRoles(tx, role, nextRole)
+    if (nextRole.previous) await connectRoles(tx, nextRole.previous, role)
+
+    logger.debug(`Moved role ${roleId} before ${nextId}`)
+  })
+
 export const getRoleById = async (id: string) => {
   logger.debug(`Getting role with id ${id}`)
   const role = await prisma.role.findUnique({
-    where: { id }
+    where: { id },
+    include: {
+      previous: true,
+      next: true
+    }
   })
 
   if (!role) {
@@ -177,3 +206,26 @@ export const deleteRole = async (roleId: string) => {
 
   logger.debug(`Deleted role ${roleId}`)
 }
+
+const connectRoles = async (tx: PrismaTransactionClient | PrismaClient, a: Role, b: Role) =>
+  tx.role.update({
+    where: { id: a.id },
+    data: {
+      next: {
+        connect: { id: b.id }
+      }
+    }
+  })
+
+const disconnectRole = async (tx: PrismaTransactionClient | PrismaClient, role: Role) =>
+  tx.role.update({
+    where: { id: role.id },
+    data: {
+      next: {
+        disconnect: true
+      },
+      previous: {
+        disconnect: true
+      }
+    }
+  })

@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import throwAndLogTRPCError from '../../libs/throwAndLogTRPCError'
 import permissionProcedure from '../../procedures/permissionProcedure'
-import { createRole, getRoleByName } from '../../services/role'
+import { createRole, getRoleByName, moveRoleBefore } from '../../services/role'
 
 const createRoleRoute = permissionProcedure(['ROLES_WRITE'])
   .input(
@@ -17,7 +17,11 @@ const createRoleRoute = permissionProcedure(['ROLES_WRITE'])
     const otherRoleWithName = await getRoleByName(name)
     if (otherRoleWithName) return throwAndLogTRPCError('BAD_REQUEST', 'Role with given name already exists.', `${ctx.user.displayName} tried to create a role with name ${name} which already exists.`)
 
-    await createRole(name)
+    const userRole = await getRoleByName('User')
+    if (!userRole) return throwAndLogTRPCError('INTERNAL_SERVER_ERROR', 'User role does not exist.', `${ctx.user.displayName} tried to create a role but the user role does not exist.`)
+
+    const role = await createRole(name)
+    await moveRoleBefore(role.id, userRole.id)
   })
 
 export default createRoleRoute
