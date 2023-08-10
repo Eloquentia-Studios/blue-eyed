@@ -3,7 +3,7 @@ import logger from './logging'
 import { allPermissions } from './permission'
 import prisma from './prisma'
 
-export const createRole = async (name: string, permissions: Permission[] = []) => {
+export const createRole = async (name: string, previous?: string, permissions: Permission[] = []) => {
   if (permissions.length === 0) {
     logger.verbose(`Creating role ${name} with no permissions`)
   } else {
@@ -15,6 +15,9 @@ export const createRole = async (name: string, permissions: Permission[] = []) =
       name,
       permissions: {
         set: permissions
+      },
+      previous: {
+        connect: previous ? { id: previous } : undefined
       }
     }
   })
@@ -55,10 +58,10 @@ export const getRoleByName = async (name: string) => {
 export const createDefaultRoles = async () => {
   logger.info('Creating default roles')
 
-  await createRole('SuperAdmin', allPermissions())
+  const superAdminRole = await createRole('SuperAdmin', undefined, allPermissions())
   logger.info('Created SuperAdmin role')
 
-  await createRole('User')
+  await createRole('User', superAdminRole.id)
   logger.info('Created User role')
 
   logger.info('Default roles created')

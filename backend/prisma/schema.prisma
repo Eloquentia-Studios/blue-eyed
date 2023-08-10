@@ -30,6 +30,13 @@ model Role {
   permissions Permission[]
   users       User[]
 
+  lockedPosition Boolean @default(false)
+
+  previous   Role?   @relation("PreviousRole", fields: [previousId], references: [id])
+  previousId String? @unique
+
+  next Role? @relation("PreviousRole")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
