@@ -1,6 +1,6 @@
 import permissionProcedure from '../../procedures/permissionProcedure'
-import { getAllRoles } from '../../services/role'
+import { getOrderedRoles } from '../../services/role'
 
-const getAllRolesQuery = permissionProcedure(['ROLES_READ']).query(() => getAllRoles())
+const getAllRolesQuery = permissionProcedure(['ROLES_READ']).query(() => getOrderedRoles())
 
 export default getAllRolesQuery

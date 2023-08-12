@@ -175,6 +175,27 @@ export const setUserRoleStatus = async (userId: string, roleId: string, enabled:
   logger.debug(`Set role ${roleId} for user ${userId} to ${enabled}`)
 }
 
+export const getOrderedRoles = async () => {
+  logger.debug('Getting ordered roles')
+
+  const roles = await prisma.$queryRaw<Role[]>`
+    WITH RECURSIVE roles AS (
+      SELECT *, 1 AS level 
+      FROM "Role"
+      WHERE name = 'User' 
+      UNION ALL
+      SELECT r.*, level + 1
+      FROM "Role" r
+      INNER JOIN roles ON roles."previousId" = r.id
+    )
+    SELECT *
+    FROM roles
+    ORDER BY level DESC 
+  `
+
+  return roles
+}
+
 export const getAllRoles = async () => {
   logger.debug('Getting all roles')
   const roles = await prisma.role.findMany({
