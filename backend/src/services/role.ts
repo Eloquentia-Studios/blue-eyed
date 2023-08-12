@@ -1,4 +1,5 @@
 import type { Permission, PrismaClient, Role } from '@prisma/client'
+import { deleteCache, getCache, setCache } from './cache'
 import logger from './logging'
 import { allPermissions } from './permission'
 import prisma, { PrismaTransactionClient } from './prisma'
@@ -22,6 +23,8 @@ export const createRole = async (name: string, previous?: string, permissions: P
       }
     }
   })
+
+  await deleteCache('ordered-roles')
 
   return role
 }
@@ -178,6 +181,13 @@ export const setUserRoleStatus = async (userId: string, roleId: string, enabled:
 export const getOrderedRoles = async () => {
   logger.debug('Getting ordered roles')
 
+  const cachedRoles = await getCache<Role[]>('ordered-roles')
+
+  if (cachedRoles) {
+    logger.debug(`Found ${cachedRoles.length} cached roles, returning those.`)
+    return cachedRoles
+  }
+
   const roles = await prisma.$queryRaw<Role[]>`
     WITH RECURSIVE roles AS (
       SELECT *, 1 AS level 
@@ -192,6 +202,9 @@ export const getOrderedRoles = async () => {
     FROM roles
     ORDER BY level DESC 
   `
+
+  logger.debug(`Found ${roles.length} roles, caching those.`)
+  await setCache('ordered-roles', roles)
 
   return roles
 }
@@ -230,6 +243,8 @@ export const deleteRole = async (roleId: string) => {
   await prisma.role.delete({
     where: { id: roleId }
   })
+
+  await deleteCache('ordered-roles')
 
   logger.debug(`Deleted role ${roleId}`)
 }
