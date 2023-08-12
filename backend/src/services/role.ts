@@ -240,8 +240,13 @@ export const deleteRole = async (roleId: string) => {
     throw new Error('Cannot delete SuperAdmin role')
   }
 
-  await prisma.role.delete({
-    where: { id: roleId }
+  prisma.$transaction(async (tx) => {
+    if (role.previous && role.next) await connectRoles(tx, role.previous, role.next)
+    await disconnectRole(tx, role)
+
+    await tx.role.delete({
+      where: { id: roleId }
+    })
   })
 
   await deleteCache('ordered-roles')
