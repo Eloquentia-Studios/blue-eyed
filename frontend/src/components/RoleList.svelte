@@ -58,8 +58,8 @@
     {:else if $roles.error}
       <ErrorMessage errorMessage="Could not load roles" />
     {:else}
-      {#each $roles.data as role (role.id)}
-        <RoleListItem {role} />
+      {#each $roles.data as role, i (role.id)}
+        <RoleListItem {role} index={i} numberOfRoles={$roles.data.length} nextRoleId={$roles.data[i + 1]?.id} previousRoleId={$roles.data[i - 1]?.id} />
       {/each}
     {/if}
   </div>

@@ -24,13 +24,11 @@ export const createRole = async (name: string, previous?: string, permissions: P
     }
   })
 
-  await deleteCache('ordered-roles')
-
   return role
 }
 
-export const moveRoleBefore = async (roleId: string, nextId: string) =>
-  prisma.$transaction(async (tx) => {
+export const moveRoleBefore = async (roleId: string, nextId: string) => {
+  await prisma.$transaction(async (tx) => {
     logger.debug(`Moving role ${roleId} before ${nextId}`)
 
     const role = await getRoleById(roleId)
@@ -58,6 +56,9 @@ export const moveRoleBefore = async (roleId: string, nextId: string) =>
 
     logger.debug(`Moved role ${roleId} before ${nextId}`)
   })
+
+  await deleteCache('ordered-roles')
+}
 
 export const getRoleById = async (id: string) => {
   logger.debug(`Getting role with id ${id}`)

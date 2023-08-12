@@ -42,3 +42,16 @@ export const deleteRole = () => {
     }
   })
 }
+
+export const moveRoleBefore = () => {
+  const client = trpc()
+  const queryClient = useQueryClient()
+
+  const getAllRolesQueryKey = client.getAllRoles.getQueryKey()
+
+  return trpc().moveRoleBefore.createMutation({
+    onSuccess: () => {
+      queryClient.invalidateQueries(getAllRolesQueryKey)
+    }
+  })
+}
