@@ -58,7 +58,7 @@
     {:else if $roles.error}
       <ErrorMessage errorMessage="Could not load roles" />
     {:else}
-      {#each $roles.data as role}
+      {#each $roles.data as role (role.id)}
         <RoleListItem {role} />
       {/each}
     {/if}
