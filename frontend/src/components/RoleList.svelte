@@ -1,5 +1,6 @@
 <script lang="ts">
   import parseTRPCError from '$lib/parseTRPCError'
+  import { flip } from 'svelte/animate'
   import { canWriteRoles } from '../services/permission'
   import { createRole, getAllRoles } from '../services/role'
   import Button from './Button.svelte'
@@ -59,7 +60,9 @@
       <ErrorMessage errorMessage="Could not load roles" />
     {:else}
       {#each $roles.data as role, i (role.id)}
-        <RoleListItem {role} index={i} numberOfRoles={$roles.data.length} nextRoleId={$roles.data[i + 1]?.id} previousRoleId={$roles.data[i - 1]?.id} />
+        <div animate:flip class="relative after:absolute after:left-[5%] after:w-[90%] after:h-[1px] after:bottom-0 after:bg-gray-800 after:block last:after:hidden">
+          <RoleListItem {role} index={i} numberOfRoles={$roles.data.length} nextRoleId={$roles.data[i + 1]?.id} previousRoleId={$roles.data[i - 1]?.id} />
+        </div>
       {/each}
     {/if}
   </div>
