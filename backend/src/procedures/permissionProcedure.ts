@@ -3,7 +3,7 @@ import throwAndLogTRPCError from '../libs/throwAndLogTRPCError'
 import { userHasPermissions } from '../services/permission'
 import authenticatedProcedure from './authenticatedProcedure'
 
-const permissionProcedure = (permissions: Permission[], shouldLog = true) =>
+const permissionProcedure = (permissions: Permission[]) =>
   authenticatedProcedure.use(async ({ ctx, next }) => {
     const hasPermission = await userHasPermissions(ctx.user.id, permissions)
 

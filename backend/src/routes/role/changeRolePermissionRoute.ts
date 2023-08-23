@@ -1,12 +1,11 @@
 import type { Permission } from '@prisma/client'
 import { z } from 'zod'
-import permissionProcedure from '../../procedures/permissionProcedure'
+import rolePermissionProcedure from '../../procedures/rolePermissionProcedure'
 import { allPermissions, changeRolePermission } from '../../services/permission'
 
-const changeRolePermissionRoute = permissionProcedure(['ROLES_WRITE'])
+const changeRolePermissionRoute = rolePermissionProcedure(['ROLES_WRITE'])
   .input(
     z.object({
-      roleId: z.string().uuid(),
       permission: z
         .string()
         // @ts-ignore Zod doesn't want to accept Permission as a string here
@@ -15,6 +14,6 @@ const changeRolePermissionRoute = permissionProcedure(['ROLES_WRITE'])
       enabled: z.boolean()
     })
   )
-  .mutation(async ({ input: { roleId, permission, enabled } }) => await changeRolePermission(roleId, permission, enabled))
+  .mutation(async ({ input: { targetedRoleId, permission, enabled } }) => await changeRolePermission(targetedRoleId, permission, enabled))
 
 export default changeRolePermissionRoute

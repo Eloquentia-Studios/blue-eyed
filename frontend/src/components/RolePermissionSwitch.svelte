@@ -11,7 +11,7 @@
   const handleChange = (enabled: boolean) => {
     $updateRolePermission.mutate({
       enabled,
-      roleId: role.id,
+      targetedRoleId: role.id,
       permission: permission
     })
   }

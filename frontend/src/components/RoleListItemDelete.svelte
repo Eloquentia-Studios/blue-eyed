@@ -17,7 +17,7 @@
   const openDelete = () => (deleteOpen = true)
 
   const deleteRoleEvent = () => {
-    $deleteRoleMutation.mutateAsync({ id: role.id }).catch((e) => {
+    $deleteRoleMutation.mutateAsync({ targetedRoleId: role.id }).catch((e) => {
       const { error } = parseTRPCError(e.message)
       if (error) return Toast.error(error)
 

@@ -22,7 +22,7 @@
     $setUserRole
       .mutateAsync({
         userId: user.id,
-        roleId,
+        targetedRoleId: roleId,
         enabled
       })
       .catch((error) => {
@@ -45,6 +45,6 @@
   {/if}
 
   {#if $userRoles.isLoading}
-    <Loader class="m-0 w-6 h-6" />
+    <Loader class="w-6 h-6 m-0" />
   {/if}
 </div>

@@ -1,13 +1,6 @@
-import { z } from 'zod'
-import permissionProcedure from '../../procedures/permissionProcedure'
+import rolePermissionProcedure from '../../procedures/rolePermissionProcedure'
 import { deleteRole } from '../../services/role'
 
-const deleteRoleRoute = permissionProcedure(['ROLES_WRITE'])
-  .input(
-    z.object({
-      id: z.string().uuid()
-    })
-  )
-  .mutation(async ({ ctx, input: { id } }) => deleteRole(id))
+const deleteRoleRoute = rolePermissionProcedure(['ROLES_WRITE']).mutation(async ({ ctx, input: { targetedRoleId } }) => deleteRole(targetedRoleId))
 
 export default deleteRoleRoute
