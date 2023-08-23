@@ -52,6 +52,7 @@ export const moveRoleBefore = () => {
   return trpc().moveRoleBefore.createMutation({
     onSuccess: () => {
       queryClient.invalidateQueries(getAllRolesQueryKey)
+      queryClient.invalidateQueries({ predicate: (query) => (query.queryKey[0] as string[]).includes('canMoveRole') })
     }
   })
 }

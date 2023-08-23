@@ -15,6 +15,8 @@ export const canChangeUserRoles = () => trpc().canChangeUserRoles.createQuery()
 
 export const getAllPermissions = () => trpc().getAllPermissions.createQuery()
 
+export const canMoveRole = (roleId: string) => trpc().canMoveRole.createQuery({ roleId })
+
 export const changeRolePermission = () => {
   const queryClient = useQueryClient()
   const client = trpc()

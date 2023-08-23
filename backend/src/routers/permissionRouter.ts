@@ -1,5 +1,6 @@
 import canCreateInvitation from '../routes/permission/canCreateInvitationQuery'
 import canDeleteUser from '../routes/permission/canDeleteUserQuery'
+import canMoveRole from '../routes/permission/canMoveRoleRoute'
 import canReadRoles from '../routes/permission/canReadRolesRoute'
 import canResetPassword from '../routes/permission/canResetPasswordQuery'
 import canWriteRoles from '../routes/permission/canWriteRolesRoute'
@@ -15,5 +16,6 @@ export const permissionRouter = t.router({
   canCreateInvitation,
   canReadRoles,
   canWriteRoles,
-  canChangeUserRoles
+  canChangeUserRoles,
+  canMoveRole
 })
