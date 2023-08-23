@@ -19,9 +19,9 @@
 
   const moveRole = (before: boolean) => {
     if (before && previousRoleId) {
-      $moveRoleBeforeMutation.mutateAsync({ roleToMove: role.id, roleIdToMoveBefore: previousRoleId })
+      $moveRoleBeforeMutation.mutateAsync({ roleToMove: role.id, roleToMoveBefore: previousRoleId })
     } else if (nextRoleId) {
-      $moveRoleBeforeMutation.mutateAsync({ roleToMove: nextRoleId, roleIdToMoveBefore: role.id })
+      $moveRoleBeforeMutation.mutateAsync({ roleToMove: nextRoleId, roleToMoveBefore: role.id })
     }
   }
 
