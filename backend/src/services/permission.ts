@@ -2,7 +2,7 @@ import type { Role } from '@prisma/client'
 import { Permission } from '@prisma/client'
 import logger from './logging'
 import prisma from './prisma'
-import { getUserRoles } from './role'
+import { getHighestRole, getUserRoles } from './role'
 
 export const allPermissions = () => Object.values(Permission)
 
@@ -10,6 +10,14 @@ export const userHasPermissions = async (userId: string, permissions: Permission
   const userPermissions = await getUserPermissions(userId)
 
   return permissions.every((permission) => userPermissions.includes(permission))
+}
+
+export const getHighestUserRoleWithPermissions = async (userId: string, permissions: Permission[]) => {
+  const roles = await getUserRoles(userId)
+
+  const userRolesWithPermissions = roles.filter((role) => permissions.every((permission) => role.permissions.includes(permission)))
+
+  return getHighestRole(userRolesWithPermissions.map((role) => role.id))
 }
 
 export const changeRolePermission = async (roleId: string, permission: Permission, enabled: boolean) => {

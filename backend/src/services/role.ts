@@ -241,6 +241,20 @@ export const deleteRole = async (roleId: string) => {
   logger.debug(`Deleted role ${roleId}`)
 }
 
+export const roleIsAboveOtherRole = async (highRoleId: string, lowRoleId: string) => {
+  const roles = await getOrderedRoles()
+
+  const highRoleIndex = roles.findIndex((role) => role.id === highRoleId)
+  const lowRoleIndex = roles.findIndex((role) => role.id === lowRoleId)
+
+  return highRoleIndex < lowRoleIndex
+}
+
+export const getHighestRole = async (roleIds: string[]) => {
+  const roles = await getOrderedRoles()
+  return roles.find((role) => roleIds.includes(role.id))
+}
+
 const connectRoles = async (tx: PrismaTransactionClient | PrismaClient, a: Role, b: Role) =>
   tx.role.update({
     where: { id: a.id },
