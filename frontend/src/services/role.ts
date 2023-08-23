@@ -53,6 +53,7 @@ export const moveRoleBefore = () => {
     onSuccess: () => {
       queryClient.invalidateQueries(getAllRolesQueryKey)
       queryClient.invalidateQueries({ predicate: (query) => (query.queryKey[0] as string[]).includes('canMoveRole') })
+      queryClient.invalidateQueries({ predicate: (query) => (query.queryKey[0] as string[]).includes('canDeleteUserRole') })
     }
   })
 }
