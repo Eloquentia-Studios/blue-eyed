@@ -1,7 +1,8 @@
 import type { Permission, PrismaClient, Role } from '@prisma/client'
 import logger from './logging'
 import { allPermissions } from './permission'
-import prisma, { PrismaTransactionClient } from './prisma'
+import type { PrismaTransactionClient } from './prisma'
+import prisma from './prisma'
 
 export const createRole = async (name: string, previous?: string, permissions: Permission[] = [], lockedPosition?: boolean) => {
   if (permissions.length === 0) {
