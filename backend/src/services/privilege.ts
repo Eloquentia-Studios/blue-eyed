@@ -37,6 +37,14 @@ class Privilege {
     return (await roleIsAboveOtherRole(highestRolesWrite.id, roleId)) && (await roleIsAboveOtherRole(highestPermission.id, roleId))
   }
 
+  public static async userHasHigherPrivilege(exertingPrivilage: string, privilageBeingTried: string, permissions: $Enums.Permission[]) {
+    const exertingPrivilageRole = await getHighestUserRoleWithPermissions(exertingPrivilage, permissions)
+    const isPrivilageRole = await getHighestUserRoleWithPermissions(privilageBeingTried, [])
+
+    if (!exertingPrivilageRole || !isPrivilageRole) return false
+    return await roleIsAboveOtherRole(exertingPrivilageRole.id, isPrivilageRole.id)
+  }
+
   public static async canUserDeleteRole(userId: string, roleId: string): Promise<boolean> {
     const highestUserRole = await getHighestUserRoleWithPermissions(userId, ['ROLES_WRITE'])
     if (!highestUserRole) return false

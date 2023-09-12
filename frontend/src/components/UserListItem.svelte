@@ -11,13 +11,13 @@
   import PopoutMenu from './PopoutMenu.svelte'
   import UserRolesDrawer from './UserRolesDrawer.svelte'
 
+  export let user: RouterOutput['getUsers'][number]
+
   const deleteUserMutation = deleteUser()
   const requestPasswordResetMutation = requestPasswordReset()
   const currentUser = getCurrentUser()
-  const canDeleteUserQuery = canDeleteUser()
+  const canDeleteUserQuery = canDeleteUser(user.id)
   const canResetPasswordQuery = canResetPassword()
-
-  export let user: RouterOutput['getUsers'][number]
 
   let isMenuOpen = false
   const toggleMenu = () => (isMenuOpen = !isMenuOpen)
