@@ -8,6 +8,8 @@
   export let permission: RouterOutput['getAllPermissions'][number]
   export let role: RouterOutput['getAllRoles'][number]
 
+  $: disabled = $updateRolePermission.isLoading || !role.permissions[permission]?.editable
+
   const handleChange = (enabled: boolean) => {
     $updateRolePermission.mutate({
       enabled,
@@ -19,5 +21,5 @@
 
 <div class="flex flex-row items-center gap-2 pl-4 lg:pl-0 lg:m-auto">
   <span class="text-sm text-white sm:text-base">{permission}</span>
-  <Switch on:change={({ detail }) => handleChange(detail.checked)} label="{role.id}-{permission}" checked={role.permissions.includes(permission)} disabled={$updateRolePermission.isLoading} />
+  <Switch on:change={({ detail }) => handleChange(detail.checked)} label="{role.id}-{permission}" checked={role.permissions[permission].enabled} {disabled} />
 </div>

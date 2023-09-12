@@ -2,8 +2,8 @@ import type { Permission } from '@prisma/client'
 import { z } from 'zod'
 import throwAndLogTRPCError from '../../libs/throwAndLogTRPCError'
 import rolePermissionProcedure from '../../procedures/rolePermissionProcedure'
-import { allPermissions, changeRolePermission, getHighestUserRoleWithPermissions } from '../../services/permission'
-import { roleIsAboveOtherRole } from '../../services/role'
+import { allPermissions, changeRolePermission } from '../../services/permission'
+import Privilege from '../../services/privilege'
 
 const changeRolePermissionRoute = rolePermissionProcedure(['ROLES_WRITE'])
   .input(
@@ -17,11 +17,8 @@ const changeRolePermissionRoute = rolePermissionProcedure(['ROLES_WRITE'])
     })
   )
   .mutation(async ({ ctx, input: { targetedRoleId, permission, enabled } }) => {
-    const highestUserRole = await getHighestUserRoleWithPermissions(ctx.user.id, [permission])
-    if (!highestUserRole) return throwAndLogTRPCError('FORBIDDEN', 'forbidden', `User ${ctx.user.username} tried to change a role permission they don't have.`, 'warn')
-
-    const userRoleIsHigher = await roleIsAboveOtherRole(highestUserRole.id, targetedRoleId)
-    if (!userRoleIsHigher) return throwAndLogTRPCError('FORBIDDEN', 'forbidden', `User ${ctx.user.username} tried to change a role permission for a role which is above or the same as their highest role.`, 'warn')
+    const userCanMoveRole = await Privilege.canUserEditRolePermission(ctx.user.id, targetedRoleId, permission)
+    if (!userCanMoveRole) return throwAndLogTRPCError('FORBIDDEN', 'forbidden', `User ${ctx.user.username} tried to change a role permission for a role which is above or the same as their highest role.`, 'warn')
 
     return await changeRolePermission(targetedRoleId, permission, enabled)
   })
