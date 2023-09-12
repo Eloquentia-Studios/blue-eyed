@@ -17,7 +17,7 @@
   const requestPasswordResetMutation = requestPasswordReset()
   const currentUser = getCurrentUser()
   const canDeleteUserQuery = canDeleteUser(user.id)
-  const canResetPasswordQuery = canResetPassword()
+  const canResetPasswordQuery = canResetPassword(user.id)
 
   let isMenuOpen = false
   const toggleMenu = () => (isMenuOpen = !isMenuOpen)
@@ -66,35 +66,33 @@
     <span class="text-sm text-gray-500 sm:text-base">{user.email}</span>
   </div>
 
-  {#if !hideReset || !hideDelete}
-    <div class="flex-row hidden gap-2 sm:flex">
-      {#if !hideReset}
-        <IconTextButton on:click={resetPassword} icon="mdi:lock-reset" title="Reset password" />
-      {/if}
+  <div class="flex-row hidden gap-2 sm:flex">
+    {#if !hideReset}
+      <IconTextButton on:click={resetPassword} icon="mdi:lock-reset" title="Reset password" />
+    {/if}
 
-      <IconTextButton on:click={openRoles} icon="mdi:shield-lock-open-outline" title="Roles" />
+    <IconTextButton on:click={openRoles} icon="mdi:shield-lock-open-outline" title="Roles" />
 
-      {#if !hideDelete}
-        <IconTextButton on:click={openDelete} class="bg-red-600" icon="bi:trash-fill" title="Remove" disabled={cannotDeleteUser} />
-      {/if}
-    </div>
+    {#if !hideDelete}
+      <IconTextButton on:click={openDelete} class="bg-red-600" icon="bi:trash-fill" title="Remove" disabled={cannotDeleteUser} />
+    {/if}
+  </div>
 
-    <div class="relative sm:hidden">
-      <IconButton on:click={toggleMenu} icon="bi:three-dots" iconClass="w-5 h-5" />
+  <div class="relative sm:hidden">
+    <IconButton on:click={toggleMenu} icon="bi:three-dots" iconClass="w-5 h-5" />
 
-      {#if isMenuOpen}
-        <PopoutMenu on:clickoutside={toggleMenu}>
-          {#if !hideReset}
-            <MenuButton on:click={resetPassword} icon="mdi:lock-reset" title="Reset password" />
-          {/if}
+    {#if isMenuOpen}
+      <PopoutMenu on:clickoutside={toggleMenu}>
+        {#if !hideReset}
+          <MenuButton on:click={resetPassword} icon="mdi:lock-reset" title="Reset password" />
+        {/if}
 
-          <MenuButton on:click={openRoles} icon="mdi:shield-lock-open-outline" title="Roles" />
+        <MenuButton on:click={openRoles} icon="mdi:shield-lock-open-outline" title="Roles" />
 
-          {#if !hideDelete}
-            <MenuButton on:click={openDelete} class="bg-red-600" icon="bi:trash-fill" title="Remove" disabled={cannotDeleteUser} />
-          {/if}
-        </PopoutMenu>
-      {/if}
-    </div>
-  {/if}
+        {#if !hideDelete}
+          <MenuButton on:click={openDelete} class="bg-red-600" icon="bi:trash-fill" title="Remove" disabled={cannotDeleteUser} />
+        {/if}
+      </PopoutMenu>
+    {/if}
+  </div>
 </div>

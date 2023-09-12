@@ -3,7 +3,7 @@ import trpc from './trpc'
 
 export const canDeleteUser = (affectedUserId: string) => trpc().canDeleteUser.createQuery({ affectedUserId })
 
-export const canResetPassword = () => trpc().canResetPassword.createQuery()
+export const canResetPassword = (affectedUserId: string) => trpc().canResetPassword.createQuery({ affectedUserId })
 
 export const canCreateInvitation = () => trpc().canCreateInvitation.createQuery()
 
