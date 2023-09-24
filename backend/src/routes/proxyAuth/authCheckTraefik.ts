@@ -2,7 +2,7 @@ import type { Request, Response } from 'express'
 import getCookie from '../../libs/getCookie'
 import getForwardedHost from '../../libs/getForwardedHost'
 import getServiceHostname from '../../libs/getServiceHostname'
-import { validateAuthorizedToken } from '../../services/authentication'
+import AuthenticationService from '../../services/authentication'
 import logger from '../../services/logging'
 
 const authCheckTraefik = async (req: Request, res: Response) => {
@@ -17,7 +17,7 @@ const authCheckTraefik = async (req: Request, res: Response) => {
     return res.redirect(authenticationUrl)
   }
 
-  const valid = await validateAuthorizedToken(token)
+  const valid = await AuthenticationService.validateToken(token)
   if (!valid) {
     logger.verbose(`Someone tried to access ${req.url} with an invalid token.`)
     logger.debug(`Redirecting to ${authenticationUrl} because the token was invalid.`)

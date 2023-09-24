@@ -3,7 +3,7 @@ import type { Request } from 'express'
 import { z } from 'zod'
 import { cacheTime } from '../constants/time'
 import generateRandomString from '../libs/generateRandomString'
-import { getRequestUserTokenData } from './authentication'
+import AuthenticationService from './authentication'
 import { deleteCache, getCache, setCache } from './cache'
 import logger from './logging'
 import prisma from './prisma'
@@ -159,7 +159,7 @@ export const getUserIdByResetToken = async (token: string) => {
 
 export const getUserFromRequest = async (req: Request) => {
   logger.debug('Getting a user from a request')
-  const tokenData = await getRequestUserTokenData(req)
+  const tokenData = await AuthenticationService.getUserTokenDataFromRequest(req)
   if (!tokenData) {
     logger.debug('Could not get user from request as no token data was found')
     return null

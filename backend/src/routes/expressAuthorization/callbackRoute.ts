@@ -3,7 +3,7 @@ import type { Request, Response } from 'express'
 import { sessionTime } from '../../constants/time'
 import sendExpressAndLogError from '../../libs/sendAndLogError'
 import trpcToExpressError from '../../libs/trpcToExpressError'
-import { getAuthorizedTokenFromRedirect } from '../../services/authentication'
+import AuthenticationService from '../../services/authentication'
 import logger from '../../services/logging'
 
 const callbackRoute = async (req: Request, res: Response) => {
@@ -19,7 +19,7 @@ const callbackRoute = async (req: Request, res: Response) => {
     logger.debug(`Redirect address ${redirect} for token ${redirectToken}`)
     if (typeof redirect !== 'string') return sendExpressAndLogError(res, 400, 'Invalid redirect address', `Someone tried to use an invalid redirect address`)
 
-    const token = await getAuthorizedTokenFromRedirect(redirectToken)
+    const token = await AuthenticationService.getTokenFromRedirect(redirectToken)
     logger.debug(`Token ${token} for redirect token ${redirectToken}`)
     if (!token) return sendExpressAndLogError(res, 400, 'Invalid redirect token', `Someone tried to use an invalid redirect token.`)
 

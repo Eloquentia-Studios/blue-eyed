@@ -3,7 +3,7 @@ import { $Enums, Permission } from '@prisma/client'
 import { getHighestUserRoleWithPermissions } from './permission'
 import { getOrderedRoles, roleIsAboveOtherRole } from './role'
 
-class Privilege {
+export default class Privilege {
   public static async getUserEditableRoles(userId: string, roles: Role[]) {
     const permissions = Object.values($Enums.Permission)
     const promises = roles.map(async (role) => {
@@ -85,5 +85,3 @@ class Privilege {
     return true
   }
 }
-
-export default Privilege
