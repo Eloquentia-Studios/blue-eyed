@@ -43,6 +43,11 @@ export const deleteCache = async (key: string) => {
   logger.debug(`Deleting cache for key ${key}`)
   const res = await client.del(key)
 
+  if (res === 0) {
+    logger.debug(`Tried to delete cache for key ${key}, but it did not exist`)
+    return
+  }
+
   if (!res) {
     logger.error(`Failed to delete cache for key ${key}, got response: ${res}`)
     throw new Error('Failed to delete cache')

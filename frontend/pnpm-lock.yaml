@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 dependencies:
   '@svelte-put/clickoutside':
     specifier: ^2.0.0
@@ -13,6 +17,9 @@ dependencies:
   '@trpc/server':
     specifier: ^10.33.0
     version: 10.33.0
+  notiflix:
+    specifier: ^3.2.6
+    version: 3.2.6
   trpc-svelte-query-adapter:
     specifier: ^2.1.0
     version: 2.1.0
@@ -979,6 +986,10 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
+  /notiflix@3.2.6:
+    resolution: {integrity: sha512-mUoaJ/s9E4r8o1O8XRqcuXEylpgOkfXtI5SEkBBlBK+LK7nq1c6qQaQcF7QzS/S018Ww7uUqSZotOs5cHENvVw==}
+    dev: false
+
   /object-assign@4.1.1:
     resolution: {integrity: sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==}
     engines: {node: '>=0.10.0'}
@@ -1503,7 +1514,3 @@ packages:
     resolution: {integrity: sha512-2eHWfjaoXgTBC2jNM1LRef62VQa0umtvRiDSk6HSzW7RvS5YtkabJrwYLLEKWBc8a5U2PTSCs+dJjUTJdlHsWQ==}
     engines: {node: '>= 14'}
     dev: true
-
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
