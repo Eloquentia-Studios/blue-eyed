@@ -1,9 +1,9 @@
 import permissionProcedure from '../../procedures/permissionProcedure'
 import PrivilegeService from '../../services/privilege'
-import { getOrderedRoles } from '../../services/role'
+import RoleService from '../../services/role'
 
 const getAllRolesQuery = permissionProcedure(['ROLES_READ']).query(async ({ ctx: { user } }) => {
-  const roles = await getOrderedRoles()
+  const roles = await RoleService.getOrderedRoles()
   return PrivilegeService.getUserEditableRolePermissions(user.id, roles)
 })
 

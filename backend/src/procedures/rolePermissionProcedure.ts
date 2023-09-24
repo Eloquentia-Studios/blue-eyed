@@ -3,7 +3,6 @@ import { z } from 'zod'
 import throwAndLogTRPCError from '../libs/throwAndLogTRPCError'
 import throwTRPCError from '../libs/throwTRPCError'
 import PermissionService from '../services/permission'
-import { roleIsAboveOtherRole } from '../services/role'
 import permissionProcedure from './permissionProcedure'
 
 const rolePermissionProcedure = (permissions: Permission[], shouldLog = true) =>

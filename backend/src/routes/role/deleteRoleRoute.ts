@@ -1,6 +1,6 @@
 import rolePermissionProcedure from '../../procedures/rolePermissionProcedure'
-import { deleteRole } from '../../services/role'
+import RoleService from '../../services/role'
 
-const deleteRoleRoute = rolePermissionProcedure(['ROLES_WRITE']).mutation(async ({ ctx, input: { targetedRoleId } }) => deleteRole(targetedRoleId))
+const deleteRoleRoute = rolePermissionProcedure(['ROLES_WRITE']).mutation(async ({ ctx, input: { targetedRoleId } }) => RoleService.delete(targetedRoleId))
 
 export default deleteRoleRoute

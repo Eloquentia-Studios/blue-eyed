@@ -1,7 +1,7 @@
 import type { Role } from '@prisma/client'
 import { $Enums, Permission } from '@prisma/client'
 import PermissionService from './permission'
-import { getOrderedRoles, roleIsAboveOtherRole } from './role'
+import RoleService from './role'
 
 export default class PrivilegeService {
   public static async getUserEditableRolePermissions(userId: string, roles: Role[]) {
@@ -35,8 +35,8 @@ export default class PrivilegeService {
     const highestPermission = await PermissionService.highestRoleWithPermissionsForUser(userId, [permission])
     if (!highestPermission) return false
 
-    if (!(await roleIsAboveOtherRole(highestRolesWrite.id, roleId))) return false
-    if (!(await roleIsAboveOtherRole(highestPermission.id, roleId))) return false
+    if (!(await RoleService.isAboveOther(highestRolesWrite.id, roleId))) return false
+    if (!(await RoleService.isAboveOther(highestPermission.id, roleId))) return false
 
     return true
   }
@@ -46,14 +46,14 @@ export default class PrivilegeService {
     const isPrivilageRole = await PermissionService.highestRoleWithPermissionsForUser(privilageBeingTried, [])
 
     if (!exertingPrivilageRole || !isPrivilageRole) return false
-    return await roleIsAboveOtherRole(exertingPrivilageRole.id, isPrivilageRole.id)
+    return await RoleService.isAboveOther(exertingPrivilageRole.id, isPrivilageRole.id)
   }
 
   public static async canUserDeleteRole(userId: string, roleId: string) {
     const highestUserRole = await PermissionService.highestRoleWithPermissionsForUser(userId, ['ROLES_WRITE'])
     if (!highestUserRole) return false
 
-    const orderedRoles = await getOrderedRoles()
+    const orderedRoles = await RoleService.getOrderedRoles()
     const highestRoleIndex = orderedRoles.findIndex((role) => role.id === highestUserRole.id)
     const targetedRoleIndex = orderedRoles.findIndex((role) => role.id === roleId)
 
@@ -65,7 +65,7 @@ export default class PrivilegeService {
     const highestUserRole = await PermissionService.highestRoleWithPermissionsForUser(userId, ['ROLES_WRITE'])
     if (!highestUserRole) return { up: false, down: false }
 
-    const orderedRoles = await getOrderedRoles()
+    const orderedRoles = await RoleService.getOrderedRoles()
     const highestUserRoleIndex = orderedRoles.findIndex((role) => role.id === highestUserRole.id)
     const targetedRoleIndex = orderedRoles.findIndex((role) => role.id === roleId)
 

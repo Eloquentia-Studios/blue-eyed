@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import authenticatedProcedure from '../../procedures/authenticatedProcedure'
 import PermissionService from '../../services/permission'
-import { roleIsAboveOtherRole } from '../../services/role'
+import RoleService from '../../services/role'
 
 const canChangeUserRolesRoute = authenticatedProcedure
   .input(
@@ -13,7 +13,7 @@ const canChangeUserRolesRoute = authenticatedProcedure
     const highestUserRole = await PermissionService.highestRoleWithPermissionsForUser(user.id, ['ROLES_WRITE', 'USERS_WRITE'])
     if (!highestUserRole) return false
 
-    return roleIsAboveOtherRole(highestUserRole.id, targetRoleId)
+    return RoleService.isAboveOther(highestUserRole.id, targetRoleId)
   })
 
 export default canChangeUserRolesRoute

@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import rolePermissionProcedure from '../../procedures/rolePermissionProcedure'
-import { setUserRoleStatus } from '../../services/role'
+import RoleService from '../../services/role'
 
 const setUserRoleStatusRoute = rolePermissionProcedure(['ROLES_WRITE', 'USERS_WRITE'])
   .input(
@@ -9,6 +9,6 @@ const setUserRoleStatusRoute = rolePermissionProcedure(['ROLES_WRITE', 'USERS_WR
       enabled: z.boolean()
     })
   )
-  .mutation(async ({ ctx, input: { userId, targetedRoleId, enabled } }) => setUserRoleStatus(userId, targetedRoleId, enabled))
+  .mutation(async ({ ctx, input: { userId, targetedRoleId, enabled } }) => RoleService.setForUser(userId, targetedRoleId, enabled))
 
 export default setUserRoleStatusRoute

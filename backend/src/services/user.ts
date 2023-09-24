@@ -8,7 +8,7 @@ import Cache from './cache'
 import logger from './logging'
 import PermissionService from './permission'
 import prisma from './prisma'
-import { getUserRoles } from './role'
+import RoleService from './role'
 
 export const PasswordSchema = z.string().min(12)
 export const UsernameSchema = z
@@ -185,9 +185,26 @@ export const invalidateResetToken = async (token: string) => {
 export const getUserPermissions = async (userId: string) => {
   logger.debug(`Getting permissions for user ${userId}`)
 
-  const roles = await getUserRoles(userId)
+  const roles = await RoleService.getForUser(userId)
 
   return PermissionService.getForRoles(roles)
+}
+
+export const getUsersWithRole = async (roleId: string) => {
+  logger.debug(`Getting users with role ${roleId}`)
+
+  const users = await prisma.user.findMany({
+    where: {
+      roles: {
+        some: {
+          id: roleId
+        }
+      }
+    }
+  })
+
+  logger.debug(`Found ${users.length} users with role ${roleId}`)
+  return users
 }
 
 const hashPassword = async (password: string) => {

@@ -3,7 +3,7 @@ import { z } from 'zod'
 import throwAndLogTRPCError from '../../libs/throwAndLogTRPCError'
 import rolePermissionProcedure from '../../procedures/rolePermissionProcedure'
 import PrivilegeService from '../../services/privilege'
-import { changePermissionForRole } from '../../services/role'
+import RoleService from '../../services/role'
 
 const changeRolePermissionRoute = rolePermissionProcedure(['ROLES_WRITE'])
   .input(
@@ -20,7 +20,7 @@ const changeRolePermissionRoute = rolePermissionProcedure(['ROLES_WRITE'])
     const userCanMoveRole = await PrivilegeService.canUserEditRolePermission(ctx.user.id, targetedRoleId, permission)
     if (!userCanMoveRole) return throwAndLogTRPCError('FORBIDDEN', 'forbidden', `User ${ctx.user.username} tried to change a role permission for a role which is above or the same as their highest role.`, 'warn')
 
-    return await changePermissionForRole(targetedRoleId, permission, enabled)
+    return await RoleService.changePermission(targetedRoleId, permission, enabled)
   })
 
 export default changeRolePermissionRoute
