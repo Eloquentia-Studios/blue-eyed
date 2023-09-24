@@ -8,7 +8,7 @@ import logger from './logging'
 import { createContext } from './trpc'
 
 export default class ExpressService {
-  static app = express()
+  private static app = express()
 
   public static async init() {
     logger.debug('Initializing express')
