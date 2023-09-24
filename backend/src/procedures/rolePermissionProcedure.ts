@@ -2,7 +2,7 @@ import type { Permission } from '@prisma/client'
 import { z } from 'zod'
 import throwAndLogTRPCError from '../libs/throwAndLogTRPCError'
 import throwTRPCError from '../libs/throwTRPCError'
-import { getHighestUserRoleWithPermissions } from '../services/permission'
+import PermissionService from '../services/permission'
 import { roleIsAboveOtherRole } from '../services/role'
 import permissionProcedure from './permissionProcedure'
 
@@ -14,7 +14,7 @@ const rolePermissionProcedure = (permissions: Permission[], shouldLog = true) =>
       })
     )
     .use(async ({ ctx, input: { targetedRoleId }, next }) => {
-      const highestUserRole = await getHighestUserRoleWithPermissions(ctx.user.id, permissions)
+      const highestUserRole = await PermissionService.highestRoleWithPermissionsForUser(ctx.user.id, permissions)
 
       // @ts-ignore - Since the user has the permission, this will always be a string
       const userRoleIsHigher = await roleIsAboveOtherRole(highestUserRole.id, targetedRoleId)

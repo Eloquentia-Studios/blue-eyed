@@ -1,6 +1,6 @@
 import type { Permission, PrismaClient, Role } from '@prisma/client'
 import logger from './logging'
-import { allPermissions } from './permission'
+import PermissionService from './permission'
 import type { PrismaTransactionClient } from './prisma'
 import prisma from './prisma'
 
@@ -94,7 +94,7 @@ export const getRoleByName = async (name: string) => {
 export const createDefaultRoles = async () => {
   logger.info('Creating default roles')
 
-  const superAdminRole = await createRole('SuperAdmin', undefined, allPermissions())
+  const superAdminRole = await createRole('SuperAdmin', undefined, PermissionService.all())
   logger.info('Created SuperAdmin role')
 
   await createRole('User', superAdminRole.id)
@@ -197,6 +197,26 @@ export const getOrderedRoles = async () => {
   logger.debug(`Found ${roles.length} roles.`)
 
   return roles
+}
+
+export const changePermissionForRole = async (roleId: string, permission: Permission, enabled: boolean) => {
+  logger.debug(`Changing permission ${permission} for role ${roleId} to ${enabled}`)
+
+  const rolePermissions = await PermissionService.getForRole(roleId)
+  if (!rolePermissions) return
+
+  const rest = rolePermissions.filter((rolePermission) => rolePermission !== permission)
+
+  await prisma.role.update({
+    where: {
+      id: roleId
+    },
+    data: {
+      permissions: {
+        set: enabled ? [permission, ...rest] : rest
+      }
+    }
+  })
 }
 
 export const getAllRoles = async () => {

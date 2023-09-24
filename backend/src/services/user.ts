@@ -6,7 +6,9 @@ import generateRandomString from '../libs/generateRandomString'
 import AuthenticationService from './authentication'
 import Cache from './cache'
 import logger from './logging'
+import PermissionService from './permission'
 import prisma from './prisma'
+import { getUserRoles } from './role'
 
 export const PasswordSchema = z.string().min(12)
 export const UsernameSchema = z
@@ -178,6 +180,14 @@ export const getUserFromRequest = async (req: Request) => {
 export const invalidateResetToken = async (token: string) => {
   logger.debug(`Invalidating reset token ${token}`)
   return await Cache.delete(token)
+}
+
+export const getUserPermissions = async (userId: string) => {
+  logger.debug(`Getting permissions for user ${userId}`)
+
+  const roles = await getUserRoles(userId)
+
+  return PermissionService.getForRoles(roles)
 }
 
 const hashPassword = async (password: string) => {

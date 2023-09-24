@@ -1,6 +1,6 @@
 import type { Role } from '@prisma/client'
 import { $Enums, Permission } from '@prisma/client'
-import { getHighestUserRoleWithPermissions } from './permission'
+import PermissionService from './permission'
 import { getOrderedRoles, roleIsAboveOtherRole } from './role'
 
 export default class Privilege {
@@ -29,25 +29,25 @@ export default class Privilege {
   }
 
   public static async canUserEditRolePermission(userId: string, roleId: string, permission: $Enums.Permission): Promise<boolean> {
-    const highestRolesWrite = await getHighestUserRoleWithPermissions(userId, ['ROLES_WRITE'])
+    const highestRolesWrite = await PermissionService.highestRoleWithPermissionsForUser(userId, ['ROLES_WRITE'])
     if (!highestRolesWrite) return false
 
-    const highestPermission = await getHighestUserRoleWithPermissions(userId, [permission])
+    const highestPermission = await PermissionService.highestRoleWithPermissionsForUser(userId, [permission])
     if (!highestPermission) return false
 
     return (await roleIsAboveOtherRole(highestRolesWrite.id, roleId)) && (await roleIsAboveOtherRole(highestPermission.id, roleId))
   }
 
   public static async userHasHigherPrivilege(exertingPrivilage: string, privilageBeingTried: string, permissions: $Enums.Permission[]) {
-    const exertingPrivilageRole = await getHighestUserRoleWithPermissions(exertingPrivilage, permissions)
-    const isPrivilageRole = await getHighestUserRoleWithPermissions(privilageBeingTried, [])
+    const exertingPrivilageRole = await PermissionService.highestRoleWithPermissionsForUser(exertingPrivilage, permissions)
+    const isPrivilageRole = await PermissionService.highestRoleWithPermissionsForUser(privilageBeingTried, [])
 
     if (!exertingPrivilageRole || !isPrivilageRole) return false
     return await roleIsAboveOtherRole(exertingPrivilageRole.id, isPrivilageRole.id)
   }
 
   public static async canUserDeleteRole(userId: string, roleId: string): Promise<boolean> {
-    const highestUserRole = await getHighestUserRoleWithPermissions(userId, ['ROLES_WRITE'])
+    const highestUserRole = await PermissionService.highestRoleWithPermissionsForUser(userId, ['ROLES_WRITE'])
     if (!highestUserRole) return false
 
     const orderedRoles = await getOrderedRoles()
@@ -59,7 +59,7 @@ export default class Privilege {
   }
 
   public static async getRoleMovableDirections(userId: string, roleId: string): Promise<{ up: boolean; down: boolean }> {
-    const highestUserRole = await getHighestUserRoleWithPermissions(userId, ['ROLES_WRITE'])
+    const highestUserRole = await PermissionService.highestRoleWithPermissionsForUser(userId, ['ROLES_WRITE'])
     if (!highestUserRole) return { up: false, down: false }
 
     const orderedRoles = await getOrderedRoles()

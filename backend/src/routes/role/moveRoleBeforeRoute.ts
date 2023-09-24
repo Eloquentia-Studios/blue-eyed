@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import throwAndLogTRPCError from '../../libs/throwAndLogTRPCError'
 import permissionProcedure from '../../procedures/permissionProcedure'
-import { getHighestUserRoleWithPermissions } from '../../services/permission'
+import PermissionService from '../../services/permission'
 import { getOrderedRoles, moveRoleBefore } from '../../services/role'
 
 const moveRoleBeforeRoute = permissionProcedure(['ROLES_WRITE'])
@@ -12,7 +12,7 @@ const moveRoleBeforeRoute = permissionProcedure(['ROLES_WRITE'])
     })
   )
   .mutation(async ({ ctx, input: { roleToMoveBefore, roleToMove } }) => {
-    const highestUserRole = await getHighestUserRoleWithPermissions(ctx.user.id, ['ROLES_WRITE'])
+    const highestUserRole = await PermissionService.highestRoleWithPermissionsForUser(ctx.user.id, ['ROLES_WRITE'])
     if (!highestUserRole) return throwAndLogTRPCError('FORBIDDEN', 'forbidden', `User ${ctx.user.username} tried to move a role they don't have.`, 'warn')
 
     const orderedRoles = await getOrderedRoles()

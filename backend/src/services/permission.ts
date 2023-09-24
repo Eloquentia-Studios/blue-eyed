@@ -3,76 +3,51 @@ import { Permission } from '@prisma/client'
 import logger from './logging'
 import prisma from './prisma'
 import { getHighestRole, getUserRoles } from './role'
+import { getUserPermissions } from './user'
 
-export const allPermissions = () => Object.values(Permission)
+export default class PermissionService {
+  public static all() {
+    return Object.values(Permission)
+  }
 
-export const userHasPermissions = async (userId: string, permissions: Permission[]) => {
-  const userPermissions = await getUserPermissions(userId)
+  public static async userHasPermissions(userId: string, permissions: Permission[]) {
+    const userPermissions = await getUserPermissions(userId)
 
-  return permissions.every((permission) => userPermissions.includes(permission))
-}
+    return permissions.every((permission) => userPermissions.includes(permission))
+  }
 
-export const getHighestUserRoleWithPermissions = async (userId: string, permissions: Permission[]) => {
-  const roles = await getUserRoles(userId)
+  public static async highestRoleWithPermissionsForUser(userId: string, permissions: Permission[]) {
+    const roles = await getUserRoles(userId)
 
-  const userRolesWithPermissions = roles.filter((role) => permissions.every((permission) => role.permissions.includes(permission)))
+    const userRolesWithPermissions = roles.filter((role) => permissions.every((permission) => role.permissions.includes(permission)))
 
-  return getHighestRole(userRolesWithPermissions.map((role) => role.id))
-}
+    return getHighestRole(userRolesWithPermissions.map((role) => role.id))
+  }
 
-export const changeRolePermission = async (roleId: string, permission: Permission, enabled: boolean) => {
-  logger.debug(`Changing permission ${permission} for role ${roleId} to ${enabled}`)
+  public static async getForRoles(roles: Role[]) {
+    const permissions = new Set<Permission>()
 
-  const rolePermissions = await getRolePermissions(roleId)
-  if (!rolePermissions) return
-
-  const rest = rolePermissions.filter((rolePermission) => rolePermission !== permission)
-
-  await prisma.role.update({
-    where: {
-      id: roleId
-    },
-    data: {
-      permissions: {
-        set: enabled ? [permission, ...rest] : rest
-      }
-    }
-  })
-}
-
-const getUserPermissions = async (userId: string) => {
-  // This could be in the user service, but it's here for now
-
-  logger.debug(`Getting permissions for user ${userId}`)
-
-  const roles = await getUserRoles(userId)
-
-  return getPermissionsFromRoles(roles)
-}
-
-const getPermissionsFromRoles = (roles: Role[]) => {
-  const permissions = new Set<Permission>()
-
-  roles.forEach((role) => {
-    role.permissions.forEach((permission) => {
-      permissions.add(permission)
+    roles.forEach((role) => {
+      role.permissions.forEach((permission) => {
+        permissions.add(permission)
+      })
     })
-  })
 
-  return Array.from(permissions)
-}
+    return Array.from(permissions)
+  }
 
-const getRolePermissions = async (roleId: string) => {
-  logger.debug(`Getting permissions for role ${roleId}`)
+  public static async getForRole(roleId: string) {
+    logger.debug(`Getting permissions for role ${roleId}`)
 
-  const role = await prisma.role.findUnique({
-    where: {
-      id: roleId
-    },
-    select: {
-      permissions: true
-    }
-  })
+    const role = await prisma.role.findUnique({
+      where: {
+        id: roleId
+      },
+      select: {
+        permissions: true
+      }
+    })
 
-  return role ? role.permissions : null
+    return role ? role.permissions : null
+  }
 }
