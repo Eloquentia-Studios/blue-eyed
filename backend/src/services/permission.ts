@@ -3,7 +3,7 @@ import { Permission } from '@prisma/client'
 import logger from './logging'
 import prisma from './prisma'
 import RoleService from './role'
-import { getUserPermissions } from './user'
+import UserService from './user'
 
 export default class PermissionService {
   public static all() {
@@ -11,7 +11,7 @@ export default class PermissionService {
   }
 
   public static async userHasPermissions(userId: string, permissions: Permission[]) {
-    const userPermissions = await getUserPermissions(userId)
+    const userPermissions = await UserService.getPermissions(userId)
 
     return permissions.every((permission) => userPermissions.includes(permission))
   }
@@ -24,7 +24,7 @@ export default class PermissionService {
     return RoleService.getHighest(userRolesWithPermissions.map((role) => role.id))
   }
 
-  public static async getForRoles(roles: Role[]) {
+  public static async getFromRoles(roles: Role[]) {
     const permissions = new Set<Permission>()
 
     roles.forEach((role) => {

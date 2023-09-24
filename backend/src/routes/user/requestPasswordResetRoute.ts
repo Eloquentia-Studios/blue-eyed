@@ -3,7 +3,7 @@ import throwAndLogTRPCError from '../../libs/throwAndLogTRPCError'
 import authenticatedProcedure from '../../procedures/authenticatedProcedure'
 import logging from '../../services/logging'
 import PrivilegeService from '../../services/privilege'
-import { generateResetToken } from '../../services/user'
+import UserService from '../../services/user'
 
 const requestPasswordResetRoute = authenticatedProcedure.input(z.string()).mutation(async ({ ctx: { user }, input: affectedUserId }) => {
   logging.verbose('Someone requested a password reset')
@@ -14,7 +14,7 @@ const requestPasswordResetRoute = authenticatedProcedure.input(z.string()).mutat
 
   logging.debug(`Requesting a password reset token for user ${affectedUserId}`)
 
-  const resetToken = generateResetToken(affectedUserId)
+  const resetToken = UserService.generateResetToken(affectedUserId)
   logging.debug(`Returning reset token ${resetToken} for user ${affectedUserId}`)
 
   return resetToken

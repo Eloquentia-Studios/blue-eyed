@@ -1,9 +1,10 @@
 import { z } from 'zod'
 import throwAndLogTRPCError from '../../libs/throwAndLogTRPCError'
+import { UserRegistrationSchema } from '../../schemas/User'
 import InvitationService from '../../services/invitation'
 import logger from '../../services/logging'
 import { t } from '../../services/trpc'
-import { UserRegistrationSchema, createUser } from '../../services/user'
+import UserService from '../../services/user'
 
 const registerUserRoute = t.procedure
   .input(
@@ -18,7 +19,7 @@ const registerUserRoute = t.procedure
 
     if (!(await InvitationService.validateToken(invitationToken))) return throwAndLogTRPCError('UNAUTHORIZED', 'Invalid invitation token', 'Someone tried to register with an invalid invitation token.', 'warn')
 
-    await createUser(registrationInfo)
+    await UserService.create(registrationInfo)
     await InvitationService.invalidateToken(invitationToken)
 
     logger.info(`User ${registrationInfo.username} has been registered.`)

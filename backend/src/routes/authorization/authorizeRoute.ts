@@ -5,7 +5,7 @@ import AuthenticationService from '../../services/authentication'
 import logger from '../../services/logging'
 import RedirectionService from '../../services/redirection'
 import { t } from '../../services/trpc'
-import { getUserIdByUsername, verifyUser } from '../../services/user'
+import UserService from '../../services/user'
 
 const authorizeRoute = t.procedure
   .input(
@@ -17,11 +17,12 @@ const authorizeRoute = t.procedure
   .mutation(async ({ input, ctx: { res } }) => {
     logger.verbose(`Trying to authorize user ${input.username}`)
 
-    const userId = await getUserIdByUsername(input.username)
-    logger.debug(`User ${input.username} has id ${userId}`)
-    if (!userId) return throwAndLogTRPCError('UNAUTHORIZED', 'Invalid username and/or password.', `User ${input.username} does not exist.`)
+    const user = await UserService.getByUsername(input.username)
+    logger.debug(`User ${input.username} has id ${user?.id}`)
+    if (!user) return throwAndLogTRPCError('UNAUTHORIZED', 'Invalid username and/or password.', `User ${input.username} does not exist.`)
+    const { id: userId } = user
 
-    const valid = await verifyUser(userId, input.password)
+    const valid = await UserService.verifyPassword(userId, input.password)
     logger.debug(`User ${input.username} has valid password: ${valid}`)
     if (!valid) return throwAndLogTRPCError('UNAUTHORIZED', 'Invalid username and/or password.', `User ${input.username} provided invalid password.`)
 

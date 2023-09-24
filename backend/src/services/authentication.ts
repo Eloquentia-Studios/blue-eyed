@@ -5,7 +5,7 @@ import generateRandomString from '../libs/generateRandomString'
 import getCookie from '../libs/getCookie'
 import Cache from './cache'
 import logger from './logging'
-import { getLastPasswordReset, getUserById } from './user'
+import UserService from './user'
 
 const userTokenSchema = z.object({
   userId: z.string().uuid(),
@@ -78,13 +78,13 @@ export default class AuthenticationService {
 
     const { userId, createdAt } = tokenData
 
-    const user = await getUserById(userId)
+    const user = await UserService.getById(userId)
     if (!user) {
       logger.debug(`Token ${token} is invalid, since user ${userId} does not exist`)
       return null
     }
 
-    const lastPasswordReset = await getLastPasswordReset(userId)
+    const lastPasswordReset = await UserService.getLastPasswordReset(userId)
     if (lastPasswordReset && lastPasswordReset > createdAt) {
       logger.debug(`Token ${token} is invalid, since user ${userId} has changed their password since the token was created`)
       return null

@@ -3,7 +3,7 @@ import logger from './logging'
 import PermissionService from './permission'
 import type { PrismaTransactionClient } from './prisma'
 import prisma from './prisma'
-import { getUsersWithRole } from './user'
+import UserService from './user'
 
 export default class RoleService {
   public static async create(name: string, previous?: string, permissions: Permission[] = [], lockedPosition?: boolean) {
@@ -140,7 +140,7 @@ export default class RoleService {
     }
 
     if (role.name === 'SuperAdmin' && !enabled) {
-      const usersWithRole = await getUsersWithRole(roleId)
+      const usersWithRole = await UserService.getByRole(roleId)
       if (usersWithRole.length <= 1) {
         logger.debug('Cannot remove last SuperAdmin')
         throw new Error('Cannot remove last SuperAdmin')
