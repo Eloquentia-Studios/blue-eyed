@@ -2,13 +2,13 @@ import { z } from 'zod'
 import throwAndLogTRPCError from '../../libs/throwAndLogTRPCError'
 import authenticatedProcedure from '../../procedures/authenticatedProcedure'
 import logging from '../../services/logging'
-import Privilege from '../../services/privilege'
+import PrivilegeService from '../../services/privilege'
 import { generateResetToken } from '../../services/user'
 
 const requestPasswordResetRoute = authenticatedProcedure.input(z.string()).mutation(async ({ ctx: { user }, input: affectedUserId }) => {
   logging.verbose('Someone requested a password reset')
 
-  const canResetUserPassword = await Privilege.userHasHigherPrivilege(user.id, affectedUserId, ['USERS_WRITE'])
+  const canResetUserPassword = await PrivilegeService.userHasHigherPrivilege(user.id, affectedUserId, ['USERS_WRITE'])
   if (!canResetUserPassword && user.id !== affectedUserId)
     return throwAndLogTRPCError('FORBIDDEN', "You do not have permission to reset this user's password", `${user.username} tried to reset the password of user with id: ${affectedUserId}`)
 
