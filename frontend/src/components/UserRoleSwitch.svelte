@@ -15,7 +15,7 @@
 
   const setUserRole = setUserRoleStatus()
 
-  const canChangeRoles = canChangeUserRoles()
+  const canChangeRoles = canChangeUserRoles(role.id)
   const userRoles = getUserRoles(user.id)
 
   const updateUserRole = async (roleId: string, enabled: boolean) => {
@@ -32,6 +32,8 @@
 
   $: checked = $userRoles.data?.some((a) => a.id === role.id)
   $: disabled = !$canChangeRoles.data || $setUserRole.isLoading
+
+  $: console.log($canChangeRoles.data)
 
   $: if (errorMessage) Toast.error(errorMessage)
   $: if ($userRoles.error) Toast.error($userRoles.error.message)
