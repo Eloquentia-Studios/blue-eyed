@@ -1,4 +1,4 @@
-import { getFlag, setFlag } from './flag'
+import FlagService from './flag'
 import logger from './logging'
 
 enum Setup {
@@ -7,7 +7,7 @@ enum Setup {
 }
 
 export const isSetupComplete = async () => {
-  const setupFlag = await getFlag('setup')
+  const setupFlag = await FlagService.get('setup')
 
   const isSetupComplete = setupFlag === Setup.complete
   logger.debug(`Setup is marked as ${isSetupComplete ? 'complete' : 'incomplete'}`)
@@ -16,5 +16,5 @@ export const isSetupComplete = async () => {
 
 export const completeSetup = async () => {
   logger.debug('Marking setup as complete')
-  return await setFlag('setup', Setup.complete)
+  return await FlagService.set('setup', Setup.complete)
 }
