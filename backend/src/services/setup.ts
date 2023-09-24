@@ -6,15 +6,17 @@ enum Setup {
   incomplete = 0
 }
 
-export const isSetupComplete = async () => {
-  const setupFlag = await FlagService.get('setup')
+export default class SetupService {
+  public static async isComplete() {
+    const setupFlag = await FlagService.get('setup')
 
-  const isSetupComplete = setupFlag === Setup.complete
-  logger.debug(`Setup is marked as ${isSetupComplete ? 'complete' : 'incomplete'}`)
-  return isSetupComplete
-}
+    const isSetupComplete = setupFlag === Setup.complete
+    logger.debug(`Setup is marked as ${isSetupComplete ? 'complete' : 'incomplete'}`)
+    return isSetupComplete
+  }
 
-export const completeSetup = async () => {
-  logger.debug('Marking setup as complete')
-  return await FlagService.set('setup', Setup.complete)
+  public static async markComplete() {
+    logger.debug('Marking setup as complete')
+    return await FlagService.set('setup', Setup.complete)
+  }
 }

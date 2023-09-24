@@ -2,7 +2,7 @@ import throwAndLogTRPCError from '../../libs/throwAndLogTRPCError'
 import setupProcedure from '../../procedures/setupProcedure'
 import logger from '../../services/logging'
 import RoleService from '../../services/role'
-import { completeSetup } from '../../services/setup'
+import SetupService from '../../services/setup'
 import { UserRegistrationSchema, createUser } from '../../services/user'
 
 const setupAdminRoute = setupProcedure.input(UserRegistrationSchema).mutation(async ({ input }) => {
@@ -16,7 +16,7 @@ const setupAdminRoute = setupProcedure.input(UserRegistrationSchema).mutation(as
   const user = await createUser(input, [superAdminRole.id])
   if (!user) throwAndLogTRPCError('INTERNAL_SERVER_ERROR', 'Failed to create user.', 'Something went wrong while trying to create the Admin user.', 'error')
 
-  await completeSetup()
+  await SetupService.markComplete()
   logger.info('Setup procedure completed.')
 })
 
