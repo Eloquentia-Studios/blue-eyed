@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { sessionTime } from '../constants/time'
 import generateRandomString from '../libs/generateRandomString'
 import getCookie from '../libs/getCookie'
-import { getCache, setCache } from './cache'
+import Cache from './cache'
 import logger from './logging'
 import { getLastPasswordReset, getUserById } from './user'
 
@@ -22,7 +22,7 @@ export default class AuthenticationService {
     // Want to make sure that tokens look the way we expect them too, or they could create issues
     const validatedData = await userTokenSchema.parseAsync({ userId, createdAt })
 
-    await setCache(token, validatedData, { ttl: sessionTime.cache })
+    await Cache.set(token, validatedData, { ttl: sessionTime.cache })
 
     logger.debug(`Created authorized token for user ${userId} with token ${token}`)
     return token
@@ -53,7 +53,7 @@ export default class AuthenticationService {
   }
 
   public static async getTokenFromRedirect(redirectToken: string) {
-    const token = await getCache<string>(redirectToken)
+    const token = await Cache.get<string>(redirectToken)
     if (!token || typeof token !== 'string') {
       logger.debug(`Redirect token ${redirectToken} is invalid, since it gave the following invalid token: ${token}`)
       return null
@@ -64,7 +64,7 @@ export default class AuthenticationService {
   }
 
   private static async getDataFromToken(token: string) {
-    const tokenData = await getCache<UserTokenData>(token)
+    const tokenData = await Cache.get<UserTokenData>(token)
     if (!tokenData) {
       logger.debug(`Token ${token} is invalid, with the following invalid data: ${tokenData}`)
       return null

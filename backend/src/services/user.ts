@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { cacheTime } from '../constants/time'
 import generateRandomString from '../libs/generateRandomString'
 import AuthenticationService from './authentication'
-import { deleteCache, getCache, setCache } from './cache'
+import Cache from './cache'
 import logger from './logging'
 import prisma from './prisma'
 
@@ -125,13 +125,13 @@ export const setUserPassword = async (userId: string, password: string) => {
     data: { password: hash }
   })
 
-  await setCache(`${userId}:last-password-reset`, Date.now())
+  await Cache.set(`${userId}:last-password-reset`, Date.now())
   logger.debug(`Successfully set password for user ${userId}`)
 }
 
 export const getLastPasswordReset = async (userId: string) => {
   logger.debug(`Getting last password reset for user ${userId}`)
-  const reset = await getCache<number>(`${userId}:last-password-reset`)
+  const reset = await Cache.get<number>(`${userId}:last-password-reset`)
   if (!reset) {
     logger.debug(`Could not find a previous password reset for user ${userId}`)
     return null
@@ -144,7 +144,7 @@ export const getLastPasswordReset = async (userId: string) => {
 export const generateResetToken = async (id: string) => {
   logger.debug(`Generating reset token for user ${id}`)
   const token = await generateRandomString(128)
-  await setCache(token, id, { ttl: cacheTime.hour * 6 })
+  await Cache.set(token, id, { ttl: cacheTime.hour * 6 })
 
   logger.debug(`Generated reset token ${token} for user ${id}`)
   return token
@@ -152,7 +152,7 @@ export const generateResetToken = async (id: string) => {
 
 export const getUserIdByResetToken = async (token: string) => {
   logger.debug(`Getting user id for reset token ${token}`)
-  const userId = await getCache<string>(token)
+  const userId = await Cache.get<string>(token)
   logger.debug(`Found user id ${userId} for reset token ${token}`)
   return userId
 }
@@ -177,7 +177,7 @@ export const getUserFromRequest = async (req: Request) => {
 
 export const invalidateResetToken = async (token: string) => {
   logger.debug(`Invalidating reset token ${token}`)
-  return await deleteCache(token)
+  return await Cache.delete(token)
 }
 
 const hashPassword = async (password: string) => {
