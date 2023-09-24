@@ -11,5 +11,5 @@
     <slot />
   </div>
 
-  <div transition:fade class="fixed inset-0 bg-black opacity-40 z-10" on:click={close} />
+  <div transition:fade class="fixed inset-0 z-10 bg-black opacity-40" on:click={close} on:keydown role="button" tabindex="0" />
 {/if}

@@ -9,8 +9,6 @@
   import RolePermissionSwitch from './RolePermissionSwitch.svelte'
 
   export let role: RouterOutput['getAllRoles'][number]
-  export let index: number
-  export let numberOfRoles: number
   export let nextRoleId: string | undefined
   export let previousRoleId: string | undefined
 

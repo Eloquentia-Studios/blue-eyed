@@ -1,4 +1,5 @@
-import { $Enums, Permission, Role } from '@prisma/client'
+import type { Role } from '@prisma/client'
+import { $Enums, Permission } from '@prisma/client'
 import { getHighestUserRoleWithPermissions } from './permission'
 import { getOrderedRoles, roleIsAboveOtherRole } from './role'
 
