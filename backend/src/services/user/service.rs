@@ -5,7 +5,7 @@ pub mod registration {
     use axum::{async_trait, http, Json, RequestExt};
     use regex::Regex;
     use std::collections::BTreeMap;
-    use crate::api::error::ApiError;
+    use crate::api::error::{ApiError, ApiFieldError};
 
     #[derive(Debug)]
     pub struct UserInfo {
@@ -14,62 +14,60 @@ pub mod registration {
         password: String,
     }
 
+    pub struct ValidationError {
+        username: Option<&'static str>,
+        email: Option<&'static str>,
+        password: Option<&'static str>,
+    }
+
     impl UserInfo {
-        pub fn new(username: &str, email: &str, password: &str) -> Result<Self, Vec<String>> {
-            let mut errors = Vec::new();
+        pub fn new(username: &str, email: &str, password: &str) -> Result<Self, ValidationError> {
+            let errors = ValidationError {
+                username: Self::validate_username(username).err(),
+                email: Self::validate_email(email).err(),
+                password: Self::validate_password(password).err(),
+            };
 
-            if let Err(error) = Self::validate_username(username) {
-                errors.push(error);
+            if let ValidationError { username: None, email: None, password: None } = errors {
+                Ok(Self {
+                    username: username.to_string(),
+                    email: email.to_string(),
+                    password: password.to_string(),
+                })
+            } else {
+                Err(errors)
             }
-
-            if let Err(error) = Self::validate_email(email) {
-                errors.push(error);
-            }
-
-            if let Err(error) = Self::validate_password(password) {
-                errors.push(error);
-            }
-
-            if !errors.is_empty() {
-                return Err(errors);
-            }
-
-            Ok(Self {
-                username: username.to_string(),
-                email: email.to_string(),
-                password: password.to_string(),
-            })
         }
 
-        fn validate_username(username: &str) -> Result<(), String> {
+        fn validate_username(username: &str) -> Result<(), &'static str> {
             if username.len() < 3 {
-                return Err("Username must be at least 3 characters long".to_string());
+                return Err("Username must be at least 3 characters long");
             }
 
             if username.len() > 32 {
-                return Err("Username must be at most 32 characters long".to_string());
+                return Err("Username must be at most 32 characters long");
             }
 
             if !username.chars().all(|c| c.is_alphanumeric()) {
-                return Err("Username must only contain alphanumeric characters".to_string());
+                return Err("Username must only contain alphanumeric characters");
             }
 
             Ok(())
         }
 
-        fn validate_email(email: &str) -> Result<(), String> {
+        fn validate_email(email: &str) -> Result<(), &'static str> {
             let email_regex =
                 Regex::new(r"^[^@\s]+@[^@\s]+\.[^@\s]+$").expect("Unable to create email regex");
             if !email_regex.is_match(email) {
-                return Err("Email must be valid".to_string());
+                return Err("Email must be valid");
             }
 
             Ok(())
         }
 
-        fn validate_password(password: &str) -> Result<(), String> {
+        fn validate_password(password: &str) -> Result<(), &'static str> {
             if password.len() < 12 {
-                return Err("Password must be at least 12 characters long".to_string());
+                return Err("Password must be at least 12 characters long");
             }
 
             Ok(())
@@ -100,15 +98,31 @@ pub mod registration {
 
             let json: Json<BTreeMap<String, String>> = Json::from_request(req, state)
                 .await
-                .map_err(|_| http::StatusCode::BAD_REQUEST)?;
-            let username = json.get("username").ok_or(http::StatusCode::BAD_REQUEST)?;
-            let email = json.get("email").ok_or(http::StatusCode::BAD_REQUEST)?;
-            let password = json.get("password").ok_or(http::StatusCode::BAD_REQUEST)?;
+                .map_err(|_| ApiError::new(http::StatusCode::BAD_REQUEST, "Incorrectly formatted JSON string"))?;
+            let username = json.get("username").ok_or(ApiError::new(http::StatusCode::BAD_REQUEST, "missing username field"))?;
+            let email = json.get("email").ok_or(ApiError::new(http::StatusCode::BAD_REQUEST, "missing email field"))?;
+            let password = json.get("password").ok_or(ApiError::new(http::StatusCode::BAD_REQUEST, "missing password field"))?;
 
-            let user_info = UserInfo::new(username, email, password)
-                .map_err(|_| http::StatusCode::BAD_REQUEST)?;
+            let user_info = UserInfo::new(username, email, password);
 
-            Ok(user_info)
+            if let Ok(user_info) = user_info {
+                return Ok(user_info);
+            }
+
+            let errors = user_info.err().expect("User info should have errors");
+
+            let mut field_errors = Vec::new();
+            if let Some(username) = errors.username {
+                field_errors.push(ApiFieldError::new("username", &username));
+            }
+            if let Some(email) = errors.email {
+                field_errors.push(ApiFieldError::new("email", &email));
+            }
+            if let Some(password) = errors.password {
+                field_errors.push(ApiFieldError::new("password", &password));
+            }
+
+            Err(ApiError::new(http::StatusCode::BAD_REQUEST, "Invalid user info").with_fields(field_errors))
         }
     }
 

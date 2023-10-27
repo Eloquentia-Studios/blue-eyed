@@ -1,3 +1,4 @@
+#[warn(clippy::unwrap_used)]
 mod api;
 mod services;
 
