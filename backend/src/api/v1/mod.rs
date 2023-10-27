@@ -6,6 +6,7 @@ use axum::{Json, Router};
 use axum::routing::get;
 use serde_json::{json, Value};
 
+
 pub fn router() -> Router {
     Router::new()
         .route("/healthcheck", get(health_check))

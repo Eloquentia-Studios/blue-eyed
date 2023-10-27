@@ -5,6 +5,7 @@ pub mod registration {
     use axum::{async_trait, http, Json, RequestExt};
     use regex::Regex;
     use std::collections::BTreeMap;
+    use crate::api::error::ApiError;
 
     #[derive(Debug)]
     pub struct UserInfo {
@@ -80,7 +81,7 @@ pub mod registration {
     where
         S: Send + Sync,
     {
-        type Rejection = http::StatusCode;
+        type Rejection = ApiError;
         async fn from_request(
             req: Request<axum::body::Body>,
             state: &S,
@@ -89,8 +90,12 @@ pub mod registration {
                 .headers()
                 .get(http::header::CONTENT_TYPE)
                 .and_then(|value| value.to_str().ok());
+
             if Some("application/json") != content_type {
-                return Err(http::StatusCode::BAD_REQUEST);
+                return Err(ApiError::new(
+                    http::StatusCode::BAD_REQUEST,
+                    "Content-Type must be application/json",
+                ));
             }
 
             let json: Json<BTreeMap<String, String>> = Json::from_request(req, state)
