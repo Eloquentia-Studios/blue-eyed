@@ -1,8 +1,8 @@
-use std::error::Error;
-use axum::{http, Json};
 use axum::response::{IntoResponse, Response};
-use serde::{Serialize, Serializer};
+use axum::{http, Json};
 use serde::ser::SerializeMap;
+use serde::{Serialize, Serializer};
+use std::error::Error;
 
 pub struct ApiError {
     code: http::StatusCode,
@@ -38,14 +38,18 @@ impl ApiFieldError {
 }
 
 impl Serialize for ApiError {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: Serializer {
-           let mut map = serializer.serialize_map(Some(2))?;
-            map.serialize_entry("code", &self.code.as_u16())?; // Serialize the status code as a u16
-            map.serialize_entry("message", self.message)?; // Serialize the message
-            if let Some(fields) = &self.fields { // Serialize the field errors if they exist
-                map.serialize_entry("fields", fields)?;
-            }
-            map.end()
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let mut map = serializer.serialize_map(Some(2))?;
+        map.serialize_entry("code", &self.code.as_u16())?; // Serialize the status code as a u16
+        map.serialize_entry("message", self.message)?; // Serialize the message
+        if let Some(fields) = &self.fields {
+            // Serialize the field errors if they exist
+            map.serialize_entry("fields", fields)?;
+        }
+        map.end()
     }
 }
 
