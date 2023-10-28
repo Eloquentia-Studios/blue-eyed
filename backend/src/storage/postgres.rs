@@ -1,10 +1,10 @@
 use axum::async_trait;
 use sqlx::{Executor, PgPool};
 use uuid::Uuid;
-
 use crate::services::user::storage::creation::UserCreationData;
 use crate::services::user::storage::UserStore;
 use crate::services::user::User;
+use crate::storage::PersistentStorage;
 
 pub struct PostgresStorage(PgPool);
 
@@ -17,6 +17,8 @@ impl PostgresStorage {
         Self(pool)
     }
 }
+
+impl PersistentStorage for PostgresStorage {}
 
 #[async_trait]
 impl UserStore for PostgresStorage {
