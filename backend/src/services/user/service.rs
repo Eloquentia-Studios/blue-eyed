@@ -6,15 +6,17 @@ pub mod registration {
     use axum::{async_trait, http, Json, RequestExt};
     use regex::Regex;
     use std::collections::BTreeMap;
+    use ts_rs::TS;
 
-    #[derive(Debug)]
-    pub struct UserInfo {
+    #[derive(Debug, TS)]
+    #[ts(export)]
+    pub struct UserRegistrationInfo {
         username: String,
         email: String,
         password: String,
     }
 
-    impl UserInfo {
+    impl UserRegistrationInfo {
         pub fn new(username: &str, email: &str, password: &str) -> Result<Self, ValidationError> {
             let errors = ValidationError {
                 username: Self::validate_username(username).err(),
@@ -74,7 +76,7 @@ pub mod registration {
     }
 
     #[async_trait]
-    impl<S> FromRequest<S, axum::body::Body> for UserInfo
+    impl<S> FromRequest<S, axum::body::Body> for UserRegistrationInfo
     where
         S: Send + Sync,
     {
@@ -117,7 +119,7 @@ pub mod registration {
             })?;
 
             // Validate the user info
-            Ok(UserInfo::new(username, email, password)?)
+            Ok(UserRegistrationInfo::new(username, email, password)?)
         }
     }
 
@@ -152,63 +154,63 @@ pub mod registration {
         #[test]
         fn username_must_be_short() {
             let username = "ab".to_string();
-            let result = UserInfo::validate_username(&username);
+            let result = UserRegistrationInfo::validate_username(&username);
             assert!(result.is_err());
         }
 
         #[test]
         fn username_must_be_long() {
             let username = "a".repeat(33);
-            let result = UserInfo::validate_username(&username);
+            let result = UserRegistrationInfo::validate_username(&username);
             assert!(result.is_err());
         }
 
         #[test]
         fn username_must_be_alphanumeric() {
             let username = "a!b".to_string();
-            let result = UserInfo::validate_username(&username);
+            let result = UserRegistrationInfo::validate_username(&username);
             assert!(result.is_err());
         }
 
         #[test]
         fn username_can_be_valid() {
             let username = "abc".to_string();
-            let result = UserInfo::validate_username(&username);
+            let result = UserRegistrationInfo::validate_username(&username);
             assert!(result.is_ok());
         }
 
         #[test]
         fn email_must_contain_at() {
             let email = "abc.com".to_string();
-            let result = UserInfo::validate_email(&email);
+            let result = UserRegistrationInfo::validate_email(&email);
             assert!(result.is_err());
         }
 
         #[test]
         fn email_must_contain_domain() {
             let email = "abc@".to_string();
-            let result = UserInfo::validate_email(&email);
+            let result = UserRegistrationInfo::validate_email(&email);
             assert!(result.is_err());
         }
 
         #[test]
         fn email_can_be_valid() {
             let email = "some.mail@mailservice.com";
-            let result = UserInfo::validate_email(&email);
+            let result = UserRegistrationInfo::validate_email(&email);
             assert!(result.is_ok());
         }
 
         #[test]
         fn password_must_be_long() {
             let password = "a".repeat(11);
-            let result = UserInfo::validate_password(&password);
+            let result = UserRegistrationInfo::validate_password(&password);
             assert!(result.is_err());
         }
 
         #[test]
         fn password_can_be_valid() {
             let password = "a".repeat(12);
-            let result = UserInfo::validate_password(&password);
+            let result = UserRegistrationInfo::validate_password(&password);
             assert!(result.is_ok());
         }
     }

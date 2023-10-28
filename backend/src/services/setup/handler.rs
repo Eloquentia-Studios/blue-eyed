@@ -6,7 +6,7 @@ pub async fn is_setup_complete() -> Json<bool> {
     Json(false)
 }
 
-pub async fn create_admin_user(registration_info: service::registration::UserInfo) -> StatusCode {
+pub async fn create_admin_user(registration_info: service::registration::UserRegistrationInfo) -> StatusCode {
     dbg!(registration_info);
 
     StatusCode::CREATED

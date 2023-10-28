@@ -1,20 +1,26 @@
+use std::collections::BTreeMap;
 use axum::response::{IntoResponse, Response};
 use axum::{http, Json};
 use serde::ser::SerializeMap;
 use serde::{Serialize, Serializer};
-use std::error::Error;
+use serde_json::json;
+use ts_rs::TS;
 
+#[derive(TS)]
+#[ts(export)]
 pub struct ApiError {
+    #[ts(type = "number")]
     code: http::StatusCode,
     message: &'static str,
+    #[ts(type = "{ [key: string]: string }", optional)]
     fields: Option<Vec<ApiFieldError>>,
 }
 
-#[derive(Serialize)]
 pub struct ApiFieldError {
     field: &'static str,
     message: &'static str,
 }
+
 
 impl ApiError {
     pub fn new(code: http::StatusCode, message: &'static str) -> Self {
@@ -45,9 +51,11 @@ impl Serialize for ApiError {
         let mut map = serializer.serialize_map(Some(2))?;
         map.serialize_entry("code", &self.code.as_u16())?; // Serialize the status code as a u16
         map.serialize_entry("message", self.message)?; // Serialize the message
+
+        // Serialize the field errors if they exist
         if let Some(fields) = &self.fields {
-            // Serialize the field errors if they exist
-            map.serialize_entry("fields", fields)?;
+            let field_map: BTreeMap<_, _> = fields.iter().map(|field| (field.field, field.message)).collect();
+            map.serialize_entry("fields", &field_map)?;
         }
         map.end()
     }

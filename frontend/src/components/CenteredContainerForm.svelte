@@ -1,3 +1,3 @@
-<form on:submit|preventDefault class="flex flex-col gap-2">
+<form on:submit class="flex flex-col gap-2">
   <slot />
 </form>

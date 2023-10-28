@@ -15,4 +15,4 @@ axum-macros = "0.3.8"
 
 validator = { version = "0.16.1", features = ["derive"] }
 regex = "1.10.2"
-http-body = "1.0.0-rc1"
+ts-rs = "7.0.0"
