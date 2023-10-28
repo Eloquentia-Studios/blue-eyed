@@ -1,6 +1,7 @@
 import {createQuery, useQueryClient} from '@tanstack/svelte-query'
 import trpc from './trpc'
 import type {User} from "../types/user";
+import Api from "./api";
 
 export const deleteUser = () => {
   const queryClient = useQueryClient()
@@ -21,7 +22,7 @@ export const createUser = () => trpc().registerUser.createMutation()
 
 export const getCurrentUser = () => createQuery<User | null>({
   queryKey: ["currentUser"],
-  queryFn: () => fetch('/api/v1/user').then((res) => res.json()),
+  queryFn: () => Api.get<null>('api/v1/user')
 })
 
 export const getUsers = () => trpc().getUsers.createQuery()
