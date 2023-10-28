@@ -1,11 +1,13 @@
-use crate::api::error::{ApiError, ApiFieldError};
+use std::collections::BTreeMap;
+
+use axum::{async_trait, http, Json, RequestExt};
 use axum::body::HttpBody;
 use axum::extract::FromRequest;
 use axum::http::Request;
-use axum::{async_trait, http, Json, RequestExt};
 use regex::Regex;
-use std::collections::BTreeMap;
 use ts_rs::TS;
+
+use crate::api::error::{ApiError, ApiFieldError};
 
 #[derive(Debug, TS)]
 #[ts(export)]
@@ -37,6 +39,18 @@ impl UserRegistrationInfo {
         } else {
             Err(errors)
         }
+    }
+
+    pub fn username(&self) -> &str {
+        &self.username
+    }
+
+    pub fn email(&self) -> &str {
+        &self.email
+    }
+
+    pub fn password(&self) -> &str {
+        &self.password
     }
 
     fn validate_username(username: &str) -> Result<(), &'static str> {
@@ -76,8 +90,8 @@ impl UserRegistrationInfo {
 
 #[async_trait]
 impl<S> FromRequest<S, axum::body::Body> for UserRegistrationInfo
-where
-    S: Send + Sync,
+    where
+        S: Send + Sync,
 {
     type Rejection = ApiError;
     async fn from_request(

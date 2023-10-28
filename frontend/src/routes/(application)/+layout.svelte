@@ -1,9 +1,9 @@
 <script type="ts">
   import Loader from '../../components/Loader.svelte'
-  import { isSetupComplete } from '../../services/setup'
   import { getCurrentUser } from '../../services/user'
+  import Setup from "../../services/setup";
 
-  const setupComplete = isSetupComplete()
+  const setupComplete = Setup.setupCompleteQuery()
   const currentUser = getCurrentUser()
 
   const navigateOnStart = () => {
