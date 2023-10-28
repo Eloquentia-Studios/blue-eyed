@@ -13,9 +13,9 @@ pub trait UserStore {
 
 pub mod creation {
     use anyhow::{anyhow, Result};
-    use argon2::{Argon2, PasswordHasher};
     use argon2::password_hash::rand_core::OsRng;
     use argon2::password_hash::SaltString;
+    use argon2::{Argon2, PasswordHasher};
     use uuid::Uuid;
 
     use crate::services::user::registration::UserRegistrationInfo;
@@ -32,10 +32,11 @@ pub mod creation {
             let argon2: Argon2 = Argon2::default();
 
             let salt = SaltString::generate(&mut OsRng);
-            let password_hash = match argon2.hash_password(registration_data.password().as_bytes(), &salt) {
-                Ok(hash) => hash.to_string(),
-                Err(e) => return Err(anyhow!(e)),
-            };
+            let password_hash =
+                match argon2.hash_password(registration_data.password().as_bytes(), &salt) {
+                    Ok(hash) => hash.to_string(),
+                    Err(e) => return Err(anyhow!(e)),
+                };
 
             Ok(Self {
                 id: Uuid::new_v4(),

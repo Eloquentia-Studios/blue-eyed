@@ -1,10 +1,10 @@
 mod setup;
 mod user;
 
+use crate::AppState;
 use axum::routing::get;
 use axum::{Json, Router};
 use serde_json::{json, Value};
-use crate::AppState;
 
 pub fn router() -> Router<AppState> {
     Router::<AppState>::new()

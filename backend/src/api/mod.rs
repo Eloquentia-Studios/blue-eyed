@@ -1,5 +1,5 @@
-use axum::Router;
 use crate::AppState;
+use axum::Router;
 
 pub mod error;
 mod v1;

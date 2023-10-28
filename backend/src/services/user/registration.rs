@@ -1,9 +1,7 @@
 use std::collections::BTreeMap;
-
-use axum::{async_trait, http, Json, RequestExt};
-use axum::body::HttpBody;
 use axum::extract::FromRequest;
 use axum::http::Request;
+use axum::{async_trait, http, Json};
 use regex::Regex;
 use ts_rs::TS;
 
@@ -90,8 +88,8 @@ impl UserRegistrationInfo {
 
 #[async_trait]
 impl<S> FromRequest<S, axum::body::Body> for UserRegistrationInfo
-    where
-        S: Send + Sync,
+where
+    S: Send + Sync,
 {
     type Rejection = ApiError;
     async fn from_request(

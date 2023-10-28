@@ -1,11 +1,9 @@
-#[warn(clippy::unwrap_used)]
-use std::net::SocketAddr;
-use std::sync::Arc;
+use crate::storage::postgres::PostgresStorage;
+use crate::storage::PersistentStorage;
 use axum_macros::FromRef;
 use dotenvy::dotenv;
-use crate::services::user::storage::UserStore;
-use crate::storage::PersistentStorage;
-use crate::storage::postgres::PostgresStorage;
+use std::net::SocketAddr;
+use std::sync::Arc;
 
 mod api;
 mod services;
@@ -13,7 +11,7 @@ mod storage;
 
 #[derive(Clone, FromRef)]
 pub struct AppState {
-    database: Arc<dyn PersistentStorage>
+    database: Arc<dyn PersistentStorage>,
 }
 
 #[tokio::main]
@@ -23,7 +21,7 @@ async fn main() {
     let storage = PostgresStorage::new().await;
 
     let app = api::router().with_state(AppState {
-        database: Arc::new(storage)
+        database: Arc::new(storage),
     });
 
     let socket_addr: SocketAddr = "0.0.0.0:8080".parse().expect("Invalid socket address");
