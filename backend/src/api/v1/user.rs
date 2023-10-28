@@ -1,7 +1,10 @@
-use crate::services::user::handler;
 use axum::routing::get;
-use axum::Router;
+use axum::{Json, Router};
 
 pub fn router() -> Router {
-    Router::new().route("/", get(handler::get_current_user))
+    Router::new().route("/", get(get_current_user))
+}
+
+pub async fn get_current_user() -> Json<Option<String>> {
+    Json(None)
 }
