@@ -4,12 +4,10 @@
     import ErrorMessage from '../../../components/ErrorMessage.svelte'
     import HorizontalDivider from '../../../components/HorizontalDivider.svelte'
     import Input from '../../../components/Input.svelte'
-    import parseTRPCError from '../../../lib/parseTRPCError'
-    import {setupAdminUser} from '../../../services/setup'
-    import type {SubmitFunction} from "@sveltejs/kit/src/exports/public";
+    import Setup from '../../../services/setup'
     import type {ApiError} from "../../../../../backend/bindings/ApiError";
 
-    const createAdmin = setupAdminUser()
+    const createAdmin = Setup.createAdminMutation()
 
     let errorMessage: string | undefined = undefined
     let invalidFields: { [key: string]: string } = {}
