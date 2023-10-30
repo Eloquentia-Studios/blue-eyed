@@ -18,7 +18,11 @@ export default class Api {
             throw await response.json() as ApiError
         }
 
-        return await response.json() as T
+        if (response.headers.get('Content-Type')?.includes('application/json')) {
+            return await response.json() as T
+        }
+
+        return undefined as T
     }
 
 }

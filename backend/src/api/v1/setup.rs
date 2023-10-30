@@ -1,5 +1,5 @@
 use crate::api::error::ApiError;
-use crate::storage::PersistentStorage;
+use crate::storage::persistent::PersistentStorage;
 use crate::{services, AppState};
 use axum::extract::State;
 use axum::routing::{get, post};

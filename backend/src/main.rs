@@ -1,9 +1,9 @@
-use crate::storage::postgres::PostgresStorage;
-use crate::storage::PersistentStorage;
+use crate::storage::persistent::postgres::PostgresStorage;
 use axum_macros::FromRef;
 use dotenvy::dotenv;
 use std::net::SocketAddr;
 use std::sync::Arc;
+use storage::persistent::PersistentStorage;
 
 mod api;
 mod services;

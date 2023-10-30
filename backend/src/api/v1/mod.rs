@@ -1,3 +1,4 @@
+mod auth;
 mod setup;
 mod user;
 
@@ -11,6 +12,7 @@ pub fn router() -> Router<AppState> {
         .route("/healthcheck", get(health_check))
         .nest("/user", user::router())
         .nest("/setup", setup::router())
+        .nest("/auth", auth::router())
 }
 
 async fn health_check() -> Json<Value> {
