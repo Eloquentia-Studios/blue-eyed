@@ -1,7 +1,7 @@
 use crate::services::authorization::password::PasswordHash;
 use crate::services::user::storage::UserStore;
 use anyhow::Result;
-use sqlx::FromRow;
+use serde::{Deserialize, Serialize};
 use std::fmt::Display;
 use ts_rs::TS;
 use uuid::Uuid;
@@ -36,7 +36,7 @@ impl User {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct UserId(Uuid);
 
 impl From<UserId> for Uuid {

@@ -1,8 +1,8 @@
 use crate::services::authorization::Session;
-use crate::services::user::UserId;
 use anyhow::Result;
+use uuid::Uuid;
 
 pub trait SessionStore {
-    fn create(&self, user_id: UserId) -> Result<Session>;
-    fn read(&self, session_id: Session) -> Result<Option<UserId>>;
+    fn save(&self, session: &Session) -> Result<()>;
+    fn get(&self, session_id: Uuid) -> Result<Option<Session>>;
 }

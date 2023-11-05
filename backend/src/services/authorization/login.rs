@@ -2,7 +2,7 @@ use crate::api::error::{ApiError, ApiFieldError};
 use crate::services::authorization;
 use crate::services::user::storage::UserStore;
 use crate::services::user::UserId;
-use anyhow::{anyhow, Result};
+use anyhow::Result;
 use axum::extract::FromRequest;
 use axum::http::Request;
 use axum::{async_trait, http, Json};
@@ -70,8 +70,12 @@ where
         }
 
         Ok(LoginCredentials {
-            username: username.expect("Checked if it is none previously").to_string(),
-            password: password.expect("Checked if it is none previously").to_string(),
+            username: username
+                .expect("Checked if it is none previously")
+                .to_string(),
+            password: password
+                .expect("Checked if it is none previously")
+                .to_string(),
         })
     }
 }

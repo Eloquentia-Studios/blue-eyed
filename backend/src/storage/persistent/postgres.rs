@@ -4,7 +4,7 @@ use crate::services::user::{SensitiveUser, User};
 use crate::storage::persistent::PersistentStorage;
 use anyhow::anyhow;
 use axum::async_trait;
-use sqlx::{FromRow, PgPool};
+use sqlx::PgPool;
 use uuid::Uuid;
 
 pub struct PostgresStorage(PgPool);
