@@ -27,7 +27,7 @@ pub mod creation {
 
     impl UserCreationData {
         pub fn new(registration_data: UserRegistrationInfo) -> Result<Self> {
-            let password_hash = PasswordHash::from_str(registration_data.password())?;
+            let password_hash = PasswordHash::create_from_str(registration_data.password())?;
 
             Ok(Self {
                 id: Uuid::new_v4(),

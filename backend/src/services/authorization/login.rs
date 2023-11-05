@@ -23,18 +23,16 @@ pub enum LoginResult {
 
 impl LoginCredentials {
     pub async fn into_user_id(self, db: &(impl UserStore + ?Sized)) -> Result<LoginResult> {
-        let user = match db.get_sensitive_by_username(&self.username).await? {
+        let saved_user = match db.get_sensitive_by_username(&self.username).await? {
             Some(user) => user,
             None => return Ok(LoginResult::InvalidCredentials),
         };
 
-        let hashed_password =
-            authorization::password::PasswordHash::from_str(user.password_hash.as_ref())?;
-        if !hashed_password.verify(&user.password_hash)? {
+        if !saved_user.password_hash.verify(self.password.as_str())? {
             return Ok(LoginResult::InvalidCredentials);
         }
 
-        Ok(LoginResult::Success(user.id.into()))
+        Ok(LoginResult::Success(saved_user.id))
     }
 }
 
