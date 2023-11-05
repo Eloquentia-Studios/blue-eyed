@@ -5,7 +5,7 @@ use crate::AppState;
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::routing::post;
-use axum::{http, Router};
+use axum::{Router};
 use std::sync::Arc;
 
 pub fn router() -> Router<AppState> {
@@ -22,7 +22,7 @@ pub async fn login(
         LoginResult::Success(user_id) => user_id,
         LoginResult::InvalidCredentials => {
             return Err(ApiError::new(
-                http::StatusCode::UNAUTHORIZED,
+                StatusCode::UNAUTHORIZED,
                 "Username or password is incorrect",
             ))
         }

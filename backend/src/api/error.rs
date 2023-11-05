@@ -84,3 +84,9 @@ impl From<http::StatusCode> for ApiError {
         }
     }
 }
+
+impl From<anyhow::Error> for ApiError {
+    fn from(_error: anyhow::Error) -> Self {
+        http::StatusCode::INTERNAL_SERVER_ERROR.into()
+    }
+}
