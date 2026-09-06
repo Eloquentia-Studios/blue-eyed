@@ -30,9 +30,17 @@ The free-text name a User is shown by. Capitals and spaces allowed, no uniquenes
 no email address for anyone.
 
 **Group**:
-A named, flat set of Users. The primitive access is granted to. No hierarchy, no inheritance, no permissions
-attached — the only thing a Group confers is reaching Services.
+A named, flat set of Users. The only thing a Grant binds: access is never given to a User directly, so
+granting one person one Service means putting them in a Group of their own. No hierarchy, no inheritance, no
+permissions attached — the only thing a Group confers is reaching Services.
 _Avoid_: Role, Team
+
+**Everyone**:
+The one Group holding every User, the Owner included. Created at bootstrap, it cannot be renamed, deleted, or
+edited, and its membership follows from being a User rather than being stored, so it is never out of date.
+Granting a Service to Everyone is how "anyone who can log in may reach this" is written down. The Owner's
+membership is not implicit access: it is an ordinary Grant on an ordinary Group, visible as such. A Service
+everyone but one person may reach needs a hand-maintained Group instead.
 
 **Credential**:
 Something a User proves themselves with. Kinds: **Passkey** and **Password**. A User has zero or more; the
@@ -55,8 +63,16 @@ and Pass they hold dies with it. The reversible alternative to deletion.
 ### Access
 
 **Service**:
-Something a User is granted access to, named by a human ("Gitea"). One Service, one grant, however many ways
-it is reachable.
+Something a User is granted access to, named by a human ("Gitea"). One Service, one Grant, however many
+Clients reach it.
+
+**Grant**:
+A binding of one Group to one Service, conferring access to every Client of that Service. It has no
+attributes, no expiry and no conditions: it exists or it does not. A User reaches a Service exactly when some
+Group they belong to holds a Grant on it, and nothing anywhere denies access, so no two rules can ever
+conflict. Deleting the Group or the Service deletes the Grant.
+_Note_: OIDC's "authorization grant" is an unrelated thing on the protocol plane and never appears
+unqualified. A Voucher is never a Grant.
 
 **Client**:
 A concrete way a Service is reached. Two kinds: **OIDC Client** and **Forward-Auth Client**. A Service has
@@ -65,8 +81,9 @@ _Note_: unqualified "Client" is forbidden wherever both planes are in play — O
 only the OIDC kind, and that ambiguity is not survivable there.
 
 **Protected Host**:
-A hostname blue-eyed gates on behalf of a Forward-Auth Client, identified by the host alone. Never a
-registrable domain — a Pass must never reach a host blue-eyed does not gate.
+A hostname blue-eyed gates on behalf of a Forward-Auth Client, identified by the host alone: compared whole
+and case-folded, with any port ignored and no wildcard or suffix matching. One hostname belongs to one
+Service. Never a registrable domain — a Pass must never reach a host blue-eyed does not gate.
 _Avoid_: Protected Domain, Protected Origin
 
 **Blue Eyed Host**:
@@ -83,7 +100,7 @@ derives from.
 **Voucher**:
 The single-use, short-lived token carried in a redirect from blue-eyed to a Protected Host, exchanged there
 for a Pass. Carries nothing that outlives the round trip.
-_Avoid_: Grant — OAuth2 owns that word here. Also: Ticket, Token.
+_Avoid_: Grant, which names the access binding here. Also: Ticket, Token.
 
 **Pass**:
 The derived state that lets requests through on one Protected Host, backed by a cookie there and a record on
