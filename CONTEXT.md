@@ -43,14 +43,39 @@ membership is not implicit access: it is an ordinary Grant on an ordinary Group,
 everyone but one person may reach needs a hand-maintained Group instead.
 
 **Credential**:
-Something a User proves themselves with. Kinds: **Passkey** and **Password**. A User has zero or more; the
-Password is one of them, not a property of the User.
-_Avoid_: Authenticator, Factor, Login
+Something a User proves themselves with. Kinds: **Passkey**, **Password** and **TOTP**. A User has zero or
+more; the Password is one of them, not a property of the User. Any kind can establish a Session on its own.
+A Credential **functions** or it does not, which for a Passkey is a fact about the deployment rather than the
+record — it functions at neither an Insecure Mode host nor a host its RP ID no longer matches. Deleting one is
+refused only when it would take a User from exactly one functioning Credential to zero.
+_Avoid_: Authenticator, Login
+
+**TOTP**:
+The Credential kind backed by a shared secret and a six-digit code. A factor in its own right, not inherently
+a second one: it signs a User in alone unless a Credential Policy demands more. The secret is held encrypted
+at rest, because unlike a Password it cannot be stored one-way.
+
+**Factor**:
+A Credential *kind*, counted at login. Two Passkeys is one Factor. A Passkey presented with user verification
+counts as two, since unlocking it took both the authenticator and the PIN or biometric that released it; the
+same Passkey without user verification counts as one.
+
+**Credential Policy**:
+The minimum number of Factors a login must present. The deployment carries a floor, default one; a User may
+demand more of themselves and never less. blue-eyed refuses to enable a policy the current Blue Eyed Host
+makes unsatisfiable, and suspends an enabled one with a banner if the host later becomes so.
 
 **Enrollment**:
 Adding a Credential to a User. Claiming an Invitation is the first one; adding a passkey a year later is the
 same operation, differing only in what authorized the request.
 _Avoid_: Registration — OIDC uses that for clients.
+
+**Recovery Code**:
+The single-use, ten-minute one-time password `blue-eyed recover` prints, which authenticates the Owner and
+nobody else. Not a Credential: it holds no place in a Credential list, is consumed on use, and is invalidated
+by the next one and by any successful login. A boot with no Owner prints one too, which is how a deployment
+gets its first User. Its authority is file access to the deployment, not anything it proves.
+_Avoid_: Reset link, Magic link, Backup code
 
 **Stranded Passkey**:
 A Passkey enrolled against a hostname this deployment no longer answers to, its RP ID frozen at Enrollment
@@ -58,16 +83,29 @@ and no longer the Blue Eyed Host's. It cannot authenticate; it is shown as such,
 enrolled for, and is eventually deleted. Restoring the previous Blue Eyed Host un-strands it, and once it is
 deleted the only way back is a fresh Enrollment.
 Nothing a User or the Owner did causes this — it is a fact about the deployment, not a decision about the
-Credential, which is what separates it from Disabled.
+Credential, which is what separates it from deletion.
 _Avoid_: Orphaned, Expired, Dead, Revoked
 
 **Invitation**:
-A standalone record holding what the Owner pre-set for someone who does not exist yet. Claiming it creates
-the User; it is never itself a User, and expiring unclaimed leaves no trace.
+A standalone record holding what the Owner pre-set for someone who does not exist yet: their Groups, and a
+**nickname** the invitee never sees, which is what the Owner recognises the pending record by. The invitee
+chooses their own Username and Display Name when they claim it. Single-use, seven days, never multi-use.
+Claiming it creates the User; it is never itself a User, and expiring unclaimed leaves no trace.
 
 **Disabled**:
 A flag on a User who keeps their identity, Groups and Credentials but authenticates no further; every Session
-and Pass they hold dies with it. The reversible alternative to deletion.
+and Pass they hold dies with it. The reversible alternative to deletion. Only a User is ever Disabled — an
+unwanted Credential is deleted, never flagged.
+
+**Locked Out**:
+A User holding no functioning Credential, so no login they could attempt would succeed. Derived and never
+stored, since it turns on what the Blue Eyed Host currently is. Distinct from Disabled, which is a decision,
+and from Throttled, which passes on its own.
+
+**Throttled**:
+A User in the backoff that follows failed logins, lengthening with each one and clearing by itself. One
+counter covers every phishable kind together, so Password and TOTP guesses do not each get their own budget.
+There is no permanent lockout: it would be a denial of service any stranger could aim at the Owner.
 
 ### Access
 
@@ -106,7 +144,7 @@ _Avoid_: Canonical origin, auth domain
 **Insecure Mode**:
 A deployment whose Blue Eyed Host is an `http://` origin, which WebAuthn's secure-context rules make
 impossible to run a ceremony at. Passkeys are unavailable to everyone for as long as it lasts — not Stranded,
-since nothing about them has changed — and Password is the only Credential kind that functions. A supported
+since nothing about them has changed — and Password and TOTP are the only Credential kinds that function. A supported
 configuration, not a broken one, and the ordinary state of a deployment that has not set up TLS yet.
 _Avoid_: Password-only mode, Passkeyless, Dev mode
 
