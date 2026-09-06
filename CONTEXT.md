@@ -52,6 +52,15 @@ Adding a Credential to a User. Claiming an Invitation is the first one; adding a
 same operation, differing only in what authorized the request.
 _Avoid_: Registration — OIDC uses that for clients.
 
+**Stranded Passkey**:
+A Passkey enrolled against a hostname this deployment no longer answers to, its RP ID frozen at Enrollment
+and no longer the Blue Eyed Host's. It cannot authenticate; it is shown as such, with the hostname it was
+enrolled for, and is eventually deleted. Restoring the previous Blue Eyed Host un-strands it, and once it is
+deleted the only way back is a fresh Enrollment.
+Nothing a User or the Owner did causes this — it is a fact about the deployment, not a decision about the
+Credential, which is what separates it from Disabled.
+_Avoid_: Orphaned, Expired, Dead, Revoked
+
 **Invitation**:
 A standalone record holding what the Owner pre-set for someone who does not exist yet. Claiming it creates
 the User; it is never itself a User, and expiring unclaimed leaves no trace.
@@ -87,9 +96,19 @@ Service. Never a registrable domain — a Pass must never reach a host blue-eyed
 _Avoid_: Protected Domain, Protected Origin
 
 **Blue Eyed Host**:
-The one hostname blue-eyed itself answers on. Every Session, passkey RP ID, OIDC `issuer` and redirect belongs
-to it, and there is exactly one.
+The one hostname blue-eyed itself answers on, configured at the deployment as the public origin a browser
+sees. There is exactly one, and it derives the passkey RP ID, the OIDC `issuer` and every URL in discovery,
+the Session cookie's host, and the absolute redirects blue-eyed emits. Reaching blue-eyed under a second name
+is unsupported. Changing it leaves every Passkey a Stranded Passkey. It says nothing about an OIDC Client's
+redirect URIs, and nothing about how many names a Service is reachable at.
 _Avoid_: Canonical origin, auth domain
+
+**Insecure Mode**:
+A deployment whose Blue Eyed Host is an `http://` origin, which WebAuthn's secure-context rules make
+impossible to run a ceremony at. Passkeys are unavailable to everyone for as long as it lasts — not Stranded,
+since nothing about them has changed — and Password is the only Credential kind that functions. A supported
+configuration, not a broken one, and the ordinary state of a deployment that has not set up TLS yet.
+_Avoid_: Password-only mode, Passkeyless, Dev mode
 
 ### Sessions
 
