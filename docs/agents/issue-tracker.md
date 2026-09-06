@@ -1,45 +1,48 @@
-# Issue tracker: GitHub
+# Issue tracker: Linear
 
-Issues and specs for this repo live as GitHub issues. Use the `gh` CLI for all operations.
+Issues and specs for this repo live in **Linear**, in the **Blue Eyed** project on the **Engineering** team (key `ENG`) of the **Eloquentia Studios** workspace — <https://linear.app/eloquentia-studios/project/blue-eyed-07cf57073d64>. Drive it through the Linear MCP connector.
+
+The Engineering team may carry work for other repos, so the **project is the repo's boundary**: every issue this repo's skills create belongs to `Blue Eyed`, and every query they run is scoped to it. An unscoped `list_issues` will return other repos' work.
+
+Linear addresses issues by team-prefixed key (`ENG-42`), never by bare number. Write keys in full so they stay resolvable outside this repo.
+
+The connector's tools are exposed under an opaque server prefix, so match them by bare name (`save_issue`, `list_issues`, …) rather than by a hardcoded `mcp__linear__*` prefix. If none are available, the connector isn't authenticated — say so rather than falling back to `gh issue`.
 
 ## Conventions
 
-- **Create an issue**: `gh issue create --title "..." --body "..."`. Use a heredoc for multi-line bodies.
-- **Read an issue**: `gh issue view <number> --comments`, filtering comments by `jq` and also fetching labels.
-- **List issues**: `gh issue list --state open --json number,title,body,labels,comments --jq '[.[] | {number, title, body, labels: [.labels[].name], comments: [.comments[].body]}]'` with appropriate `--label` and `--state` filters.
-- **Comment on an issue**: `gh issue comment <number> --body "..."`
-- **Apply / remove labels**: `gh issue edit <number> --add-label "..."` / `--remove-label "..."`
-- **Close**: `gh issue close <number> --comment "..."`
+Linear's MCP surface is **save-shaped**: one `save_*` tool per entity handles both create and update. Passing `id` updates; omitting it creates.
 
-Infer the repo from `git remote -v`; `gh` does this automatically when run inside a clone.
+- **Create an issue**: `save_issue` with `team: "Engineering"`, `project: "Blue Eyed"`, `title`, and `description` (Markdown, literal newlines — do not escape). The `project` is not optional — an issue created without it lands in the team's backlog outside this repo's boundary.
+- **Update an issue**: `save_issue` with `id` set to the key (`ENG-42`). For a large description edit, prefer `patch` over resending the whole body.
+- **Read an issue**: `get_issue` on the key for the body, `list_comments` for the discussion. Fetch both before acting on a ticket. Pass `includeRelations: true` when blockers matter.
+- **List issues**: `list_issues` with `project: "Blue Eyed"`, further filtered by `state`, `label`, `assignee`, or `parentId`. Pass `fields` to select only what you need. Prefer a filtered query over listing everything and discarding.
+- **Comment on an issue**: `save_comment` with `issueId` and `body`. Reply into a thread with `parentId` instead.
+- **Apply / remove labels**: `save_issue` with `addLabels` / `removeLabels`. Both are incremental, so there is no read-modify-write — do **not** send the `labels` array, which replaces the whole set and silently drops labels you didn't list.
+- **Close**: `save_issue` with `state: "Done"`. Linear has no separate close verb; leave a comment first when the resolution needs explaining.
+
+Engineering's states are `Backlog`, `Todo`, `In Progress`, `Done`, `Canceled`, and `Duplicate`. "Open" means anything whose status type is not `completed` or `canceled`.
 
 ## Pull requests as a triage surface
 
 **PRs as a request surface: no.** _(Set to `yes` if this repo treats external PRs as feature requests; `/triage` reads this flag.)_
 
-When set to `yes`, PRs run through the same labels and states as issues, using the `gh pr` equivalents:
-
-- **Read a PR**: `gh pr view <number> --comments` and `gh pr diff <number>` for the diff.
-- **List external PRs for triage**: `gh pr list --state open --json number,title,body,labels,author,authorAssociation,comments` then keep only `authorAssociation` of `CONTRIBUTOR`, `FIRST_TIME_CONTRIBUTOR`, or `NONE` (drop `OWNER`/`MEMBER`/`COLLABORATOR`).
-- **Comment / label / close**: `gh pr comment`, `gh pr edit --add-label`/`--remove-label`, `gh pr close`.
-
-GitHub shares one number space across issues and PRs, so a bare `#42` may be either: resolve with `gh pr view 42` and fall back to `gh issue view 42`.
+Code review still happens on GitHub — `Eloquentia-Studios/blue-eyed`, via the `gh` CLI. That split is deliberate: Linear owns intent, GitHub owns code. `get_issue` returns a `gitBranchName` (e.g. `esaias/eng-2-connect-your-tools`); branch from that name and Linear's GitHub integration links the PR back to its issue automatically.
 
 ## When a skill says "publish to the issue tracker"
 
-Create a GitHub issue.
+Create a Linear issue in the `Blue Eyed` project on the Engineering team.
 
 ## When a skill says "fetch the relevant ticket"
 
-Run `gh issue view <number> --comments`.
+`get_issue` on the key, then `list_comments` on the same issue.
 
 ## Wayfinding operations
 
-Used by `/wayfinder`. The **map** is a single issue with **child** issues as tickets.
+Used by `/wayfinder`. The **map** is a single issue with **sub-issues** as tickets.
 
-- **Map**: a single issue labelled `wayfinder:map`, holding the Notes / Decisions-so-far / Fog body. `gh issue create --label wayfinder:map`.
-- **Child ticket**: an issue linked to the map as a GitHub sub-issue (`gh api` on the sub-issues endpoint). Where sub-issues aren't enabled, add the child to a task list in the map body and put `Part of #<map>` at the top of the child body. Labels: `wayfinder:<type>` (`research`/`prototype`/`grilling`/`task`). Once claimed, the ticket is assigned to the driving dev.
-- **Blocking**: GitHub's **native issue dependencies**, the canonical, UI-visible representation. Add an edge with `gh api --method POST repos/<owner>/<repo>/issues/<child>/dependencies/blocked_by -F issue_id=<blocker-db-id>`, where `<blocker-db-id>` is the blocker's numeric **database id** (`gh api repos/<owner>/<repo>/issues/<n> --jq .id`, _not_ the `#number` or `node_id`). GitHub reports `issue_dependencies_summary.blocked_by` (open blockers only, the live gate). Where dependencies aren't available, fall back to a `Blocked by: #<n>, #<n>` line at the top of the child body. A ticket is unblocked when every blocker is closed.
-- **Frontier query**: list the map's open children (`gh issue list --state open`, scoped to the map's sub-issues / task list), drop any with an open blocker (`issue_dependencies_summary.blocked_by > 0`, or an open issue in the `Blocked by` line) or an assignee; first in map order wins.
-- **Claim**: `gh issue edit <n> --add-assignee @me`, the session's first write.
-- **Resolve**: `gh issue comment <n> --body "<answer>"`, then `gh issue close <n>`, then append a context pointer (gist + link) to the map's Decisions-so-far.
+- **Map**: one issue in the `Blue Eyed` project labelled `wayfinder:map`, holding the Notes / Decisions-so-far / Fog body. Set `project` explicitly on every child as well, rather than relying on inheritance from the parent.
+- **Child ticket**: `save_issue` with `parentId` set to the map's key — Linear's native sub-issue relationship, visible in the map's sub-issue list and progress count. Label it `wayfinder:<type>` (`research` / `prototype` / `grilling` / `task`). Once claimed, assign it to the driving dev.
+- **Blocking**: `save_issue` with `blockedBy` (append-only; `removeBlockedBy` to undo) creates Linear's native issue relation — the canonical, UI-visible representation. Read it back with `get_issue` and `includeRelations: true`. A ticket is unblocked when every blocker sits in a `completed` or `canceled` state.
+- **Frontier query**: `list_issues` with `parentId` set to the map, keeping open states; drop any with an open blocker or an assignee; first in map order wins.
+- **Claim**: `save_issue` with `assignee: "me"`. This is the session's first write.
+- **Resolve**: `save_comment` with the answer, `save_issue` with `state: "Done"`, then append a context pointer to the map's Decisions-so-far section with a `patch`.

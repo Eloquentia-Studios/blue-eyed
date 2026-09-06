@@ -4,7 +4,7 @@
 
 ### Issue tracker
 
-Issues live in GitHub Issues on `Eloquentia-Studios/blue-eyed`, via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+Issues live in Linear, in the `Blue Eyed` project on the Eloquentia Studios workspace's Engineering team (key `ENG`), via the Linear MCP connector. See `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 
